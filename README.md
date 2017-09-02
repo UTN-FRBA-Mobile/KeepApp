@@ -1,4 +1,4 @@
-# KeepApp
+<img src="https://github.com/UTN-FRBA-Mobile/KeepApp/blob/master/images/Logo-texto.png" width="300">
 Red social para deportistas en donde el usuario carga sus mediciones (tiempos de corrida, kgs levantados, mts saltados, etc) y lo comparte con sus amigos.
 Otras funcionalidades:
 
