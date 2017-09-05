@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "183979594854",
+    "firebase_url": "https://keepapp-b0bdf.firebaseio.com",
+    "project_id": "keepapp-b0bdf",
+    "storage_bucket": "keepapp-b0bdf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183979594854:android:41d56ac3b2290b80",
+        "android_client_info": {
+          "package_name": "com.utn.mobile.keepapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "183979594854-ag9489qi673ddjrbok2aba6tlb0eau2c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdV-V8doV-BI6Po1EEzZ61IjbrrD6JkKY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
