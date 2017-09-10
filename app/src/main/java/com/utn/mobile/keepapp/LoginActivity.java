@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -79,17 +80,14 @@ public class LoginActivity extends AppCompatActivity
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        // Buttons
-        //findViewById(R.id.sign_in_button).setOnClickListener(this);
-        //findViewById(R.id.sign_up_button).setOnClickListener(this);
+        // Para que el teclado no se abra solo al abrir la activity
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         // Firebase
         mAuth = FirebaseAuth.getInstance();
 
         // Facebook
         callbackManager = CallbackManager.Factory.create();
-        //FacebookSdk.sdkInitialize(getApplicationContext());
-        //AppEventsLogger.activateApp(this);
         fbLoginButton.setReadPermissions("email", "public_profile");
 
         // Register your callback//
@@ -162,6 +160,11 @@ public class LoginActivity extends AppCompatActivity
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null) {
+            //Si tiene la sesion iniciada, ya mandarlo a la siguiente activity
+            /*Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
+            startActivity(i_records);*/
+        }
         //updateUI(currentUser);
     }
 
