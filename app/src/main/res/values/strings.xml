@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">KeepApp</string>
     <string name="title_activity_login">Iniciar Sesión</string>
+    <string name="title_activity_records">Records</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

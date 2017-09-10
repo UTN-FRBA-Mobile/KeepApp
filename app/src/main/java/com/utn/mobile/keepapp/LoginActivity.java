@@ -1,5 +1,6 @@
 package com.utn.mobile.keepapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -93,6 +94,9 @@ public class LoginActivity extends AppCompatActivity implements
                             Toast.makeText(LoginActivity.this, "Authentication Success!",
                                     Toast.LENGTH_SHORT).show();
                             //updateUI(user);
+
+                            Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
+                            startActivity(i_records);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LogIn", "createUserWithEmail:failure", task.getException());
@@ -125,6 +129,9 @@ public class LoginActivity extends AppCompatActivity implements
                             Toast.makeText(LoginActivity.this, "Login Succesfull!",
                                     Toast.LENGTH_SHORT).show();
                             //updateUI(user);
+
+                            Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
+                            startActivity(i_records);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LogIn", "signInWithEmail:failure", task.getException());
