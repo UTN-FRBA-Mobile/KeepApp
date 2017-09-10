@@ -26,6 +26,7 @@
             android:label="@string/title_activity_records"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".AgregarEjercicio"></activity>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
@@ -44,7 +45,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
