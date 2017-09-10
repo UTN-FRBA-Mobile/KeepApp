@@ -11,24 +11,43 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookActivity;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity implements
-        View.OnClickListener {
+public class LoginActivity extends AppCompatActivity
+        implements View.OnClickListener {
 
     @BindView(R.id.email)
     EditText mEmailField;
     @BindView(R.id.password)
     EditText mPasswordField;
+    @BindView(R.id.login_button)
+    LoginButton fbLoginButton;
 
     private FirebaseAuth mAuth;
+
+    private CallbackManager callbackManager;
 
     @BindView(R.id.login_progress)
     ProgressBar mProgressDialog;
@@ -61,10 +80,81 @@ public class LoginActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         // Buttons
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_up_button).setOnClickListener(this);
+        //findViewById(R.id.sign_in_button).setOnClickListener(this);
+        //findViewById(R.id.sign_up_button).setOnClickListener(this);
 
+        // Firebase
         mAuth = FirebaseAuth.getInstance();
+
+        // Facebook
+        callbackManager = CallbackManager.Factory.create();
+        //FacebookSdk.sdkInitialize(getApplicationContext());
+        //AppEventsLogger.activateApp(this);
+        fbLoginButton.setReadPermissions("email", "public_profile");
+
+        // Register your callback//
+        fbLoginButton.registerCallback(callbackManager,
+
+                // If the login attempt is successful, then call onSuccess and pass the LoginResult//
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d("LogIn", "facebook:onSuccess:" + loginResult);
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
+
+                    // If the user cancels the login, then call onCancel//
+                    @Override
+                    public void onCancel() {
+                        Log.d("LogIn", "facebook:onCancel");
+                    }
+
+                    // If an error occurs, then call onError//
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Log.d("LogIn", "facebook:onError", exception);
+                    }
+                });
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d("LogIn", "handleFacebookAccessToken:" + token);
+
+        showProgressDialog();
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("LogIn", "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(LoginActivity.this, "Authentication Success!",
+                                    Toast.LENGTH_SHORT).show();
+                            Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
+                            startActivity(i_records);
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("LogIn", "signInWithCredential:failure", task.getException());
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                Toast.makeText(getApplicationContext(), "Ya existe una cuenta con ese Email. Inicie sesión sin Facebook.",
+                                        Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(LoginActivity.this, "Error de autenticación",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            LoginManager.getInstance().logOut();
+                            //updateUI(null);
+                        }
+
+                        // [START_EXCLUDE]
+                        hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
     }
 
     @Override
@@ -75,7 +165,10 @@ public class LoginActivity extends AppCompatActivity implements
         //updateUI(currentUser);
     }
 
-    private void createAccount(String email, String password) {
+    @OnClick(R.id.sign_up_button)
+    public void createAccount() {
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
         Log.d("LogIn", "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -98,11 +191,14 @@ public class LoginActivity extends AppCompatActivity implements
                             Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
                             startActivity(i_records);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("LogIn", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                Toast.makeText(getApplicationContext(), "Ya existe una cuenta con ese Email. Inicie sesión.",
+                                        Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(LoginActivity.this, "Error de autenticación",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            LoginManager.getInstance().logOut();
                         }
 
                         hideProgressDialog();
@@ -110,7 +206,10 @@ public class LoginActivity extends AppCompatActivity implements
                 });
     }
 
-    private void signIn(String email, String password) {
+    @OnClick(R.id.sign_in_button)
+    public void signIn() {
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
         Log.d("LogIn", "signIn:" + email);
         if (!validateForm()) {
             return;
@@ -230,7 +329,7 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }*/
 
-    @Override
+    /*@Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.sign_up_button) {
@@ -238,5 +337,18 @@ public class LoginActivity extends AppCompatActivity implements
         } else if (i == R.id.sign_in_button) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         }
+    }*/
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result back to the Facebook SDK
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
