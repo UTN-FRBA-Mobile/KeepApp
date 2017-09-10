@@ -24,8 +24,8 @@
         <activity
             android:name=".RecordsActivity"
             android:label="@string/title_activity_records"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".AgregarEjercicio"></activity>
     </application>
 
 </manifest>
