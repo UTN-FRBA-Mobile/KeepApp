@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity
     @BindView(R.id.login_button)
     LoginButton fbLoginButton;
 
-    private FirebaseAuth mAuth;
+    public FirebaseAuth mAuth;
 
     private CallbackManager callbackManager;
 

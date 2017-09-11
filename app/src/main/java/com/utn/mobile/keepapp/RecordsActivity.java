@@ -42,6 +42,13 @@ public class RecordsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.cargarListView();
+
+    }
+
     public void cargarListView(){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ejercicios/".concat(currentUser.getUid()));
