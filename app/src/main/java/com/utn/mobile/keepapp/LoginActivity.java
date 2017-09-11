@@ -131,8 +131,8 @@ public class LoginActivity extends AppCompatActivity
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(LoginActivity.this, "Authentication Success!",
                                     Toast.LENGTH_SHORT).show();
-                            Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
-                            startActivity(i_records);
+                            Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
+                            startActivity(i_menu);
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -191,8 +191,8 @@ public class LoginActivity extends AppCompatActivity
                                     Toast.LENGTH_SHORT).show();
                             //updateUI(user);
 
-                            Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
-                            startActivity(i_records);
+                            Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
+                            startActivity(i_menu);
                         } else {
                             if(task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(getApplicationContext(), "Ya existe una cuenta con ese Email. Inicie sesión.",
@@ -232,8 +232,8 @@ public class LoginActivity extends AppCompatActivity
                                     Toast.LENGTH_SHORT).show();
                             //updateUI(user);
 
-                            Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
-                            startActivity(i_records);
+                            Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
+                            startActivity(i_menu);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LogIn", "signInWithEmail:failure", task.getException());

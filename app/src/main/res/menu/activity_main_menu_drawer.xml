@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_records"
+            android:icon="@android:drawable/ic_menu_agenda"
+            android:title="Records" />
+        <item
+            android:id="@+id/nav_records_viejo"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Records viejo" />
+        <item
+            android:id="@+id/nav_option3"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Pantalla3" />
+        <item
+            android:id="@+id/nav_tools"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="Configuración" />
+    </group>
+
+
+</menu>
