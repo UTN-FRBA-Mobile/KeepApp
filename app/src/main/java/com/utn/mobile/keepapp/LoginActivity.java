@@ -1,5 +1,6 @@
 package com.utn.mobile.keepapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -50,22 +51,21 @@ public class LoginActivity extends AppCompatActivity
 
     private CallbackManager callbackManager;
 
-    @BindView(R.id.login_progress)
-    ProgressBar mProgressDialog;
+    private ProgressDialog progressDialog;
+
+    /*@BindView(R.id.login_progress)
+    ProgressBar mProgressDialog;*/
 
     public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.setVisibility(View.VISIBLE);
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Autenticando...");
+        progressDialog.show();
     }
 
     public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.getVisibility()==View.VISIBLE) {
-            mProgressDialog.setProgress(0);
-            mProgressDialog.setVisibility(View.GONE);
-        }
+        progressDialog.dismiss();
     }
 
     @Override
@@ -79,6 +79,11 @@ public class LoginActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Autenticando...");
 
         // Para que el teclado no se abra solo al abrir la activity
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
