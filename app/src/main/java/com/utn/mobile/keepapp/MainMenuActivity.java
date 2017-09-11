@@ -39,7 +39,7 @@ public class MainMenuActivity extends AppCompatActivity
             Fragment recordsFragment = new RecordsFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.contentFragment, recordsFragment)
-                    .addToBackStack(String.valueOf(recordsFragment.getId()))
+                    //.addToBackStack(String.valueOf(recordsFragment.getId()))
                     .commit();
             navigationView.setCheckedItem(R.id.nav_records);
         }
