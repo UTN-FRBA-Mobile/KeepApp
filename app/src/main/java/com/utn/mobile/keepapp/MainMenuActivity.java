@@ -98,6 +98,8 @@ public class MainMenuActivity extends AppCompatActivity
             Intent recordsIntent = new Intent(getApplicationContext(), RecordsActivity.class);
             startActivity(recordsIntent);
             return true;
+        }else if(id == R.id.nav_mapa){
+            nextFragment = new MapaFragment();
         }
 
         if (nextFragment != null) {
