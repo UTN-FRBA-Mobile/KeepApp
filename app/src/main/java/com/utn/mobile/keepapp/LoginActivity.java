@@ -138,6 +138,7 @@ public class LoginActivity extends AppCompatActivity
                                     Toast.LENGTH_SHORT).show();
                             Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
                             startActivity(i_menu);
+                            finish();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -198,6 +199,7 @@ public class LoginActivity extends AppCompatActivity
 
                             Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
                             startActivity(i_menu);
+                            finish();
                         } else {
                             if(task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(getApplicationContext(), "Ya existe una cuenta con ese Email. Inicie sesión.",
@@ -239,6 +241,7 @@ public class LoginActivity extends AppCompatActivity
 
                             Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
                             startActivity(i_menu);
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LogIn", "signInWithEmail:failure", task.getException());
