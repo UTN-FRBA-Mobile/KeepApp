@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +30,8 @@ public class MainMenuActivity extends AppCompatActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    TextView menuUsername;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,9 @@ public class MainMenuActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        View header = navigationView.getHeaderView(0);
+        menuUsername = (TextView) header.findViewById(R.id.menu_username);
+
         //selecciono la pantalla default
         if(savedInstanceState == null){
             Fragment recordsFragment = new RecordsFragment();
@@ -52,6 +59,10 @@ public class MainMenuActivity extends AppCompatActivity
                     .commit();
             navigationView.setCheckedItem(R.id.nav_records);
         }
+        if(FirebaseAuth.getInstance().getCurrentUser().getDisplayName() != null){
+            menuUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        }
+
     }
 
     @Override
