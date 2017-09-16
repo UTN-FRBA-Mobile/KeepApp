@@ -22,4 +22,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
+
+    <!-- API KEYS -->
+    <string name="google_maps_key_juli">AIzaSyCErnnNp-04Mz7JYbggm_Q9ggCyqf97xvI</string>
+    <string name="google_maps_key_nico">AIzaSyCl_nEGOpLCwzHb6j-NrIK7cGi8s7H2Fyk</string>
+    <string name="google_maps_key_lucho"></string>
+    <string name="google_maps_key_joel"></string>
+    <string name="google_maps_key_fer"></string>
 </resources>
