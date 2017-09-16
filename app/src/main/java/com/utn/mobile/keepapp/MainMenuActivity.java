@@ -15,6 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainMenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -100,6 +103,13 @@ public class MainMenuActivity extends AppCompatActivity
             return true;
         }else if(id == R.id.nav_mapa){
             nextFragment = new MapaFragment();
+        }else if(id == R.id.nav_sign_out) {
+            FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
+            Intent logInIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            logInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(logInIntent);
+            finish();
         }
 
         if (nextFragment != null) {

@@ -168,8 +168,9 @@ public class LoginActivity extends AppCompatActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
             //Si tiene la sesion iniciada, ya mandarlo a la siguiente activity
-            /*Intent i_records = new Intent(getApplicationContext(), RecordsActivity.class);
-            startActivity(i_records);*/
+            Intent i_main_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
+            startActivity(i_main_menu);
+            finish();
         }
         //updateUI(currentUser);
     }
@@ -337,16 +338,6 @@ public class LoginActivity extends AppCompatActivity
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
             findViewById(R.id.signed_in_buttons).setVisibility(View.GONE);
-        }
-    }*/
-
-    /*@Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.sign_up_button) {
-            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
-        } else if (i == R.id.sign_in_button) {
-            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         }
     }*/
 
