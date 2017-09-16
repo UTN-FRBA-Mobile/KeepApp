@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_records"
-            android:icon="@android:drawable/ic_menu_agenda"
+            android:icon="@drawable/ic_star_black_24dp"
             android:title="Records" />
         <item
             android:id="@+id/nav_records_viejo"
@@ -16,15 +16,15 @@
             android:title="Pantalla3" />
         <item
             android:id="@+id/nav_tools"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="Configuración" />
         <item
             android:id="@+id/nav_mapa"
-            android:icon="@android:drawable/ic_menu_mapmode"
+            android:icon="@drawable/ic_fitness_center_black_24dp"
             android:title="Mi Gimnasio" />
         <item
             android:id="@+id/nav_sign_out"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@drawable/ic_clear_black_24dp"
             android:title="Cerrar Sesión" />
     </group>
 
