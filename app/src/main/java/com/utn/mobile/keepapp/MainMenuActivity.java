@@ -1,6 +1,7 @@
 package com.utn.mobile.keepapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -12,10 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +35,10 @@ public class MainMenuActivity extends AppCompatActivity
     NavigationView navigationView;
 
     TextView menuUsername;
+    TextView menuEmail;
+    ImageView menuProfilePic;
+
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,8 @@ public class MainMenuActivity extends AppCompatActivity
 
         View header = navigationView.getHeaderView(0);
         menuUsername = (TextView) header.findViewById(R.id.menu_username);
+        menuEmail = (TextView) header.findViewById(R.id.menu_email);
+        menuProfilePic = (ImageView) header.findViewById(R.id.menu_profile_pic);
 
         //selecciono la pantalla default
         if(savedInstanceState == null){
@@ -59,8 +69,17 @@ public class MainMenuActivity extends AppCompatActivity
                     .commit();
             navigationView.setCheckedItem(R.id.nav_records);
         }
-        if(FirebaseAuth.getInstance().getCurrentUser().getDisplayName() != null){
-            menuUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            menuUsername.setText(user.getDisplayName()==null?user.getEmail():user.getDisplayName());
+            menuEmail.setText(user.getEmail());
+            Uri url = user.getPhotoUrl();
+            if(url != null) {
+                Picasso.with(this)
+                        .load(url)
+                        .noFade()
+                        .into(menuProfilePic);
+            }
         }
 
     }
