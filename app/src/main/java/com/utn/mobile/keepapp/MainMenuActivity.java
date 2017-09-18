@@ -60,6 +60,19 @@ public class MainMenuActivity extends AppCompatActivity
         menuEmail = (TextView) header.findViewById(R.id.menu_email);
         menuProfilePic = (ImageView) header.findViewById(R.id.menu_profile_pic);
 
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment userFragment = new UsuarioFragment();
+                MainMenuActivity.this.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.contentFragment, userFragment)
+                        .addToBackStack(String.valueOf(userFragment.getId()))
+                        .commit();
+                getSupportActionBar().setTitle("Perfil");
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
+
         //selecciono la pantalla default
         if(savedInstanceState == null){
             Fragment recordsFragment = new RecordsFragment();
@@ -157,5 +170,14 @@ public class MainMenuActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            //System.out.println("@#@");
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
