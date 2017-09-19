@@ -1,4 +1,4 @@
-package com.utn.mobile.keepapp;
+package com.utn.mobile.keepapp.domain;
 
 /**
  * Created by Joel on 10/9/2017.
@@ -46,7 +46,7 @@ public class Ejercicio {
     public Ejercicio (){}
 
     public Ejercicio(String nombre, String fecha, Double valor, String unidad) {
-        //this.nombre = nombre;
+        this.nombre = nombre;
         this.fecha = fecha;
         this.valor = valor;
         this.unidad = unidad;

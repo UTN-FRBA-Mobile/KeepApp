@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.utn.mobile.keepapp.domain.Ejercicio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class RecordsFragment extends Fragment {
 
     public void cargarListView(){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ejercicios/".concat(currentUser.getUid()));
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios/".concat(currentUser.getUid()).concat("/ejercicios"));
 
         final ListView mi_lista = (ListView) thisView.findViewById(R.id.list_records);
         final Context context = getContext();
@@ -64,7 +65,7 @@ public class RecordsFragment extends Fragment {
 
                 for(DataSnapshot dspEjercicio : dataSnapshot.getChildren()){
                     Ejercicio ejercicio = dspEjercicio.getValue(Ejercicio.class);
-                    ejercicio.setNombre(dspEjercicio.getKey());
+                    //ejercicio.setNombre(dspEjercicio.getKey());
 
                     lista_ejercicios.add(ejercicio);
                 }

@@ -32,6 +32,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.utn.mobile.keepapp.domain.Usuario;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,7 +53,10 @@ public class LoginActivity extends AppCompatActivity
     @BindView(R.id.login_button)
     LoginButton fbLoginButton;
 
-    public FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
+
 
     private CallbackManager callbackManager;
 
@@ -136,6 +145,7 @@ public class LoginActivity extends AppCompatActivity
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(LoginActivity.this, "Authentication Success!",
                                     Toast.LENGTH_SHORT).show();
+                            createUserWithFacebook(user);
                             Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
                             startActivity(i_menu);
                             finish();
@@ -159,6 +169,36 @@ public class LoginActivity extends AppCompatActivity
                         // [END_EXCLUDE]
                     }
                 });
+    }
+
+    private void createUser(FirebaseUser user) {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference();
+        Usuario u = new Usuario(user.getEmail(),user.getEmail(),user.getProviderId());
+        mDatabaseReference.child("usuarios").child(user.getUid()).setValue(u);
+    }
+
+    private void createUserWithFacebook(final FirebaseUser user) {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference();
+        DatabaseReference dr = mDatabaseReference.child("usuarios").child(user.getUid()+"/");
+
+        dr.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // User exists. Do nothing
+                } else{
+                    Usuario u = new Usuario(user.getDisplayName(),user.getEmail(),"facebook");
+                    u.setFullName(user.getDisplayName());
+                    u.setProfilePic(user.getPhotoUrl().toString());
+                    mDatabaseReference.child("usuarios").child(user.getUid()).setValue(u);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     @Override
@@ -197,6 +237,8 @@ public class LoginActivity extends AppCompatActivity
                             Toast.makeText(LoginActivity.this, "Authentication Success!",
                                     Toast.LENGTH_SHORT).show();
                             //updateUI(user);
+
+                            createUser(user);
 
                             Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
                             startActivity(i_menu);

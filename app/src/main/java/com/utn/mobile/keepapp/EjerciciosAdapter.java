@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.utn.mobile.keepapp.Ejercicio;
+import com.utn.mobile.keepapp.domain.Ejercicio;
 
 import java.util.ArrayList;
 import java.util.List;

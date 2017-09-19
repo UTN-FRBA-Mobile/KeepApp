@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.utn.mobile.keepapp.domain.Ejercicio;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -70,12 +71,11 @@ public class AgregarEjercicio extends AppCompatActivity {
         this.spinner_unidades.setAdapter(adapter);
     }
 
-    public void agregarEjercicio(View view)
-    {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("ejercicios");
+    public void agregarEjercicio(View view) {
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("usuarios/".concat(currentFirebaseUser.getUid()).concat("/ejercicios"));
 
         //String userId = mDatabase.push().getKey();
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentFirebaseUser.getUid();
         String nombreEjercicio = spinner_ejercicios.getSelectedItem().toString();
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
@@ -85,7 +85,7 @@ public class AgregarEjercicio extends AppCompatActivity {
 
         Ejercicio nuevoEjercicio = new Ejercicio(nombreEjercicio, fecha, resultado, unidad);
 
-        mDatabase.child(userId).child(nombreEjercicio).setValue(nuevoEjercicio);
+        mDatabase.push().setValue(nuevoEjercicio);
 
         this.finish();
 
