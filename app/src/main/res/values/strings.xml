@@ -14,6 +14,9 @@
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="error_field_required">El campo es obligatorio</string>
 
+    <!-- Strings related to profile -->
+    <string name="action_save_changes">Guardar</string>
+
     <!-- FACEBOOK -->
     <string name="facebook_app_id">474466269585951</string>
     <string name="fb_login_protocol_scheme">fb474466269585951</string>

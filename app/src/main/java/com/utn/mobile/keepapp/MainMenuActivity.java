@@ -19,7 +19,12 @@ import android.widget.TextView;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.utn.mobile.keepapp.domain.Usuario;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +44,7 @@ public class MainMenuActivity extends AppCompatActivity
     ImageView menuProfilePic;
 
     FirebaseUser user;
+    FirebaseDatabase firebaseDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +88,12 @@ public class MainMenuActivity extends AppCompatActivity
                     .commit();
             navigationView.setCheckedItem(R.id.nav_records);
         }
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        firebaseDb = FirebaseDatabase.getInstance();
+
+        updateUserUIData();
+
+        /*user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             menuUsername.setText(user.getDisplayName()==null?user.getEmail():user.getDisplayName());
             menuEmail.setText(user.getEmail());
@@ -93,8 +104,36 @@ public class MainMenuActivity extends AppCompatActivity
                         .noFade()
                         .into(menuProfilePic);
             }
-        }
+        }*/
 
+    }
+
+    private void updateUserUIData() {
+        firebaseDb
+                .getReference("usuarios")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()) {
+                            Usuario usuario = dataSnapshot.getValue(Usuario.class);
+                            menuUsername.setText(usuario.getUsername());
+                            menuEmail.setText(usuario.getEmail());
+                            if(usuario.getProfilePic() != null) {
+                                Uri uri = Uri.parse(usuario.getProfilePic());
+                                Picasso.with(getApplicationContext())
+                                        .load(uri)
+                                        .noFade()
+                                        .into(menuProfilePic);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
