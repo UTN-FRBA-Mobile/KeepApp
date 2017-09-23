@@ -15,7 +15,7 @@
     <string name="error_field_required">El campo es obligatorio</string>
 
     <!-- Strings related to profile -->
-    <string name="action_save_changes">Guardar</string>
+    <string name="action_save_changes">Guardar cambios</string>
 
     <!-- FACEBOOK -->
     <string name="facebook_app_id">474466269585951</string>

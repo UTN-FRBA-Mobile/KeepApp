@@ -78,11 +78,11 @@ public class UsuarioFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void showProgressDialog() {
+    public void showProgressDialog(String message) {
         progressDialog = new ProgressDialog(getActivity(),
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Autenticando...");
+        progressDialog.setMessage(message);
         progressDialog.show();
     }
 
@@ -102,9 +102,7 @@ public class UsuarioFragment extends Fragment {
         firebaseDb = FirebaseDatabase.getInstance();
         dbUserLogged = firebaseDb.getReference("usuarios").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        showProgressDialog();
         updateUserUIData();
-        hideProgressDialog();
 
         email.setFocusable(false);
         email.setEnabled(false);
@@ -141,6 +139,7 @@ public class UsuarioFragment extends Fragment {
     }
 
     private void updateUserUIData() {
+        showProgressDialog("Cargando");
         dbUserLogged
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -160,14 +159,15 @@ public class UsuarioFragment extends Fragment {
                             if(usuario.getProvider().equals("facebook")) {
                                 fbLinkButton.setClickable(false);
                                 fbLinkButton.setBackgroundColor(Color.GRAY);
-                                fbLinkButton.setText("Ya inició");
+                                //fbLinkButton.setText("Ya inició");
                             }
+                            hideProgressDialog();
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        hideProgressDialog();
                     }
                 });
     }
@@ -186,7 +186,7 @@ public class UsuarioFragment extends Fragment {
                 .child("fullName")
                 .setValue(fullname.getText().toString());
 
-        Snackbar.make(view, "Cambios guardados", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, "Tus cambios han sido guardados.", Snackbar.LENGTH_LONG).show();
 
     }
 
@@ -216,7 +216,7 @@ public class UsuarioFragment extends Fragment {
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d("Profile", "handleFacebookAccessToken:" + token);
 
-        showProgressDialog();
+        showProgressDialog("Autenticando...");
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.getCurrentUser().linkWithCredential(credential)

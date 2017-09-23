@@ -61,25 +61,29 @@
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/profile_save_changes"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingLeft="26dp"
-        android:paddingRight="26dp"
-        android:layout_gravity="center"
-        android:text="@string/action_save_changes"/>
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:padding="12dp"
+        android:text="@string/action_save_changes"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/fb_link_account"
         android:textColor="#fff"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:paddingLeft="12dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:paddingTop="12dp"
-        android:paddingBottom="12dp"/>
+        android:paddingBottom="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"/>
 
 </LinearLayout>
