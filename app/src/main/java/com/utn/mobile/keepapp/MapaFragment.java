@@ -31,9 +31,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.utn.mobile.keepapp.domain.Gimnasio;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapaFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
     private GoogleMap mapa;
@@ -97,6 +103,28 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         mapa = map;
         getMyLocation();
         mapa.setOnMapLongClickListener(this);
+        drawSavedGyms();
+    }
+
+    private void drawSavedGyms() {
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dspGimnasio : dataSnapshot.getChildren()){
+                    Gimnasio gimnasio = dspGimnasio.getValue(Gimnasio.class);
+                    mapa.addMarker(new MarkerOptions()
+                            .position(new LatLng(gimnasio.getLatitud(), gimnasio.getLongitud()))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                            .title(gimnasio.getNombre())
+                    );
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
     @Override

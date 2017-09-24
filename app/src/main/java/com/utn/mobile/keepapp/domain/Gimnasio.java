@@ -9,6 +9,10 @@ public class Gimnasio {
     public double latitud;
     public double longitud;
 
+    public Gimnasio() {
+        //Constructor vacio para que firebase lo pueda instanciar
+    }
+
     public Gimnasio(String nombre, double latitud, double longitud) {
         this.nombre = nombre;
         this.latitud = latitud;
