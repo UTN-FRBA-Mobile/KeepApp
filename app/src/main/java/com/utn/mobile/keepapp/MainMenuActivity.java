@@ -71,6 +71,7 @@ public class MainMenuActivity extends AppCompatActivity
             public void onClick(View view) {
                 Fragment userFragment = new UsuarioFragment();
                 MainMenuActivity.this.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter,R.anim.exit,R.anim.pop_enter,R.anim.pop_exit)
                         .replace(R.id.contentFragment, userFragment)
                         .addToBackStack(String.valueOf(userFragment.getId()))
                         .commit();
@@ -83,6 +84,7 @@ public class MainMenuActivity extends AppCompatActivity
         if(savedInstanceState == null){
             Fragment recordsFragment = new RecordsFragment();
             MainMenuActivity.this.getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter,R.anim.exit,R.anim.pop_enter,R.anim.pop_exit)
                     .replace(R.id.contentFragment, recordsFragment)
                     //.addToBackStack(String.valueOf(recordsFragment.getId()))
                     .commit();
@@ -201,6 +203,7 @@ public class MainMenuActivity extends AppCompatActivity
 
         if (nextFragment != null) {
             MainMenuActivity.this.getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter,R.anim.exit,R.anim.pop_enter,R.anim.pop_exit)
                     .replace(R.id.contentFragment, nextFragment)
                     .addToBackStack(String.valueOf(nextFragment.getId()))
                     .commit();
