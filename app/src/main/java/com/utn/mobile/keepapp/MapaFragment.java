@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -38,10 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.utn.mobile.keepapp.domain.Gimnasio;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class MapaFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapaFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
     private GoogleMap mapa;
     private Marker currentMarker;
     private Activity activity;
@@ -80,22 +76,41 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         final ImageButton saveButton = (ImageButton) getView().findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                hideForm();
                 String nombre = inputName.getText().toString();
                 Gimnasio nuevoGimnasio = new Gimnasio(nombre, currentMarker.getPosition().latitude, currentMarker.getPosition().longitude);
-                currentMarker.setTitle(nombre);
+                currentMarker.setTag(nuevoGimnasio);
 
-                mDatabase.push().setValue(nuevoGimnasio);
-                Toast.makeText(getContext(), "El gimnasio ha sido guardado satisfactoriamente", Toast.LENGTH_SHORT).show();
+                mDatabase.push().setValue(nuevoGimnasio, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        hideForm();
+                        Toast.makeText(getContext(), "El gimnasio ha sido guardado satisfactoriamente", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
         final ImageButton deleteButton = (ImageButton) getView().findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                hideForm();
+                Gimnasio currentGym = (Gimnasio) currentMarker.getTag();
+                mDatabase.child(currentGym.getFirebaseId()).removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        hideForm();
+                        Toast.makeText(getContext(), "El gimnasio ha sido eliminado satisfactoriamente", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
+    }
+
+    private void hideForm() {
+        form.setVisibility(View.GONE);
+    }
+
+    private void showForm() {
+        form.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -103,21 +118,29 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         mapa = map;
         getMyLocation();
         mapa.setOnMapLongClickListener(this);
-        drawSavedGyms();
+        mapa.setOnMarkerClickListener(this);
+        loadSavedGyms();
     }
 
-    private void drawSavedGyms() {
+    private void loadSavedGyms() {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot dspGimnasio : dataSnapshot.getChildren()){
-                    Gimnasio gimnasio = dspGimnasio.getValue(Gimnasio.class);
-                    mapa.addMarker(new MarkerOptions()
-                            .position(new LatLng(gimnasio.getLatitud(), gimnasio.getLongitud()))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                            .title(gimnasio.getNombre())
-                    );
-                }
+                mapa.clear();
+                drawSavedGyms(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        mDatabase.removeEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mapa.clear();
+                drawSavedGyms(dataSnapshot);
             }
 
             @Override
@@ -127,15 +150,27 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         });
     }
 
+    private void drawSavedGyms(DataSnapshot dataSnapshot) {
+        for(DataSnapshot dspGimnasio : dataSnapshot.getChildren()){
+            Gimnasio gimnasio = dspGimnasio.getValue(Gimnasio.class);
+            gimnasio.setFirebaseId(dspGimnasio.getKey());
+
+            Marker marker = mapa.addMarker(new MarkerOptions()
+                    .position(new LatLng(gimnasio.getLatitud(), gimnasio.getLongitud()))
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+            );
+            marker.setTag(gimnasio);
+        }
+    }
+
     @Override
     public void onMapLongClick(LatLng point) {
         currentMarker = mapa.addMarker(new MarkerOptions()
             .position(point)
             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
-        form.setVisibility(View.VISIBLE);
+        showForm();
     }
-
 
     private void getMyLocation() {
         if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -181,8 +216,15 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
-    private void hideForm() {
-        form.setVisibility(View.GONE);
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        currentMarker = marker;
+
+        Gimnasio currentGym = (Gimnasio) marker.getTag();
+        inputName.setText(currentGym.getNombre());
+        showForm();
+
+        return true;
     }
 
 }

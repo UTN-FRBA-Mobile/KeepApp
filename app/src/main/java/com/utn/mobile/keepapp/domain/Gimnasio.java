@@ -5,10 +5,11 @@ package com.utn.mobile.keepapp.domain;
  */
 
 public class Gimnasio {
-    public String nombre;
-    public double latitud;
-    public double longitud;
+    private String firebaseId;
 
+    private String nombre;
+    private double latitud;
+    private double longitud;
     public Gimnasio() {
         //Constructor vacio para que firebase lo pueda instanciar
     }
@@ -17,6 +18,14 @@ public class Gimnasio {
         this.nombre = nombre;
         this.latitud = latitud;
         this.longitud = longitud;
+    }
+
+    public String getFirebaseId() {
+        return firebaseId;
+    }
+
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
     }
 
     public String getNombre() {
