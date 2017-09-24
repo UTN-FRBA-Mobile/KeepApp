@@ -11,4 +11,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:id="@+id/markerForm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/base"
+        android:visibility="invisible"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/inputName"
+            android:layout_width="0dp"
+            android:layout_weight="6"
+            android:layout_height="49.1dp"
+            android:inputType="textVisiblePassword"
+            android:layout_marginBottom="15.2dp" />
+        <ImageButton
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="49.1dp"
+            android:background="@null"
+            android:src="@drawable/ic_save_black_24dp" />
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="49.1dp"
+            android:background="@null"
+            android:src="@drawable/ic_delete_black_24dp" />
+
+    </LinearLayout>
+
 </FrameLayout>
