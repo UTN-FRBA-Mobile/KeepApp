@@ -17,6 +17,9 @@
     <!-- Strings related to profile -->
     <string name="action_save_changes">Guardar cambios</string>
 
+    <!-- Strings related to add exercise -->
+    <string name="action_save_exercise">Guardar</string>
+
     <!-- FACEBOOK -->
     <string name="facebook_app_id">474466269585951</string>
     <string name="fb_login_protocol_scheme">fb474466269585951</string>
