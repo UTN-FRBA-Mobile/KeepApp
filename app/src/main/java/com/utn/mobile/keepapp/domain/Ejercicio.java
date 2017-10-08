@@ -4,7 +4,7 @@ package com.utn.mobile.keepapp.domain;
  * Created by Joel on 10/9/2017.
  */
 
-public class Ejercicio {
+public class Ejercicio implements Comparable<Ejercicio> {
     private String nombre;
     private String fecha;
     private Double valor;
@@ -50,5 +50,32 @@ public class Ejercicio {
         this.fecha = fecha;
         this.valor = valor;
         this.unidad = unidad;
+    }
+
+    public boolean esMismoEjercicio(Ejercicio otro_ej){
+        return (this.nombre.equals(otro_ej.getNombre()) && this.unidad.equals(otro_ej.getUnidad()));
+    }
+
+    public boolean esMejor(Ejercicio otro_ej){
+        switch (unidad){
+            case "min":
+                if(this.valor < otro_ej.getValor())
+                    return true;
+                break;
+            case "kg":
+            case "mts":
+                if(this.valor > otro_ej.getValor())
+                    return true;
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(Ejercicio ej) {
+        // Aca se pueden poner varios criterios para ordenar la coleccion
+        // Por ahora solo pongo por orden alfabetico
+        int comp = this.nombre.compareTo(ej.getNombre());
+        return comp;
     }
 }

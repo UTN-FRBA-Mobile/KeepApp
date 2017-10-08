@@ -21,6 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.utn.mobile.keepapp.domain.Ejercicio;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -70,6 +72,9 @@ public class RecordsFragment extends Fragment {
                     lista_ejercicios.add(ejercicio);
                 }
 
+                RecordsFragment.filtrarRecords(lista_ejercicios);
+                Collections.sort(lista_ejercicios); // Para ordenar (por ahora alfabeticamente)
+
                 EjerciciosAdapter adapter = new EjerciciosAdapter(lista_ejercicios, context);
                 mi_lista.setAdapter(adapter);
             }
@@ -81,4 +86,23 @@ public class RecordsFragment extends Fragment {
         });
     }
 
+    public static void filtrarRecords(List<Ejercicio> lista_ejercicios){
+        Iterator<Ejercicio> it = lista_ejercicios.iterator();
+        while(it.hasNext()){
+            Ejercicio ej_checkeo = it.next();
+
+            boolean es_record = true;
+            for(int j = 0; j < lista_ejercicios.size(); j++){
+
+                if(lista_ejercicios.get(j).esMismoEjercicio(ej_checkeo)
+                        && lista_ejercicios.get(j).esMejor(ej_checkeo)){
+                    es_record = false;
+                }
+            }
+
+            if(!es_record){
+                it.remove();
+            }
+        }
+    }
 }
