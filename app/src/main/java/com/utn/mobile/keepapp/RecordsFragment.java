@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class RecordsFragment extends Fragment {
@@ -73,7 +76,11 @@ public class RecordsFragment extends Fragment {
                 }
 
                 RecordsFragment.filtrarRecords(lista_ejercicios);
-                Collections.sort(lista_ejercicios); // Para ordenar (por ahora alfabeticamente)
+                Toast.makeText(getApplicationContext(),"Filtrado por records",Toast.LENGTH_SHORT).show();
+
+                // Para ordenar, por ahora alfabeticamente, pero se puede configurar cualquier criterio
+                Collections.sort(lista_ejercicios);
+                Toast.makeText(getApplicationContext(),"Ordenado alfabeticamente",Toast.LENGTH_SHORT).show();
 
                 EjerciciosAdapter adapter = new EjerciciosAdapter(lista_ejercicios, context);
                 mi_lista.setAdapter(adapter);
@@ -97,6 +104,7 @@ public class RecordsFragment extends Fragment {
                 if(lista_ejercicios.get(j).esMismoEjercicio(ej_checkeo)
                         && lista_ejercicios.get(j).esMejor(ej_checkeo)){
                     es_record = false;
+                    break;
                 }
             }
 
