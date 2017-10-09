@@ -29,8 +29,9 @@ import com.utn.mobile.keepapp.domain.Usuario;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainMenuActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+
+public class MainMenuActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -97,6 +98,9 @@ public class MainMenuActivity extends AppCompatActivity
         updateUserUIData();
 
 
+// ...
+
+
         /*user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             menuUsername.setText(user.getDisplayName()==null?user.getEmail():user.getDisplayName());
@@ -110,8 +114,8 @@ public class MainMenuActivity extends AppCompatActivity
             }
         }*/
 
-    }
 
+    }
 
     private void updateUserUIData() {
         firebaseDb
@@ -225,4 +229,6 @@ public class MainMenuActivity extends AppCompatActivity
             fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+
 }

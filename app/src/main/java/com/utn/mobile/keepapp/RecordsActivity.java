@@ -35,8 +35,8 @@ public class RecordsActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<Status> {
 
-    protected ArrayList<Geofence> mGeofenceList;
-    protected GoogleApiClient mGoogleApiClient;
+    private static ArrayList<Geofence> mGeofenceList;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +78,7 @@ public class RecordsActivity extends AppCompatActivity implements
                     getGeofencingRequest(),
                     getGeofencePendingIntent()
             ).setResultCallback(this); // Result processed in onResult().
+            Toast.makeText(this,"Geofencing started", Toast.LENGTH_LONG).show();
         } catch (SecurityException securityException) {
             // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
         }
