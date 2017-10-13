@@ -1,10 +1,15 @@
 package com.utn.mobile.keepapp;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -87,8 +92,24 @@ public class AgregarEjercicio extends AppCompatActivity {
 
         mDatabase.push().setValue(nuevoEjercicio);
 
+        updateWidget(nombreEjercicio);
+
         this.finish();
 
+    }
+
+    public void updateWidget(String tipoEjercicio){
+        int ej1 = R.id.newEjercicio1;
+        int ej2 = R.id.newEjercicio2;
+        int ej3 = R.id.newEjercicio3;
+
+        Context context = this;
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+        ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
+        //remoteViews.setTextViewText(R.id.textView, tipoEjercicio);
+        remoteViews.setImageViewResource(ej1, R.drawable.ic_running);
+        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
     }
 
 }
