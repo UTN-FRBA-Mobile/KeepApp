@@ -1,5 +1,6 @@
 package com.utn.mobile.keepapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -200,12 +202,25 @@ public class MainMenuActivity extends AppCompatActivity implements
         }else if(id == R.id.nav_mapa){
             nextFragment = new MapaFragment();
         }else if(id == R.id.nav_sign_out) {
-            FirebaseAuth.getInstance().signOut();
-            LoginManager.getInstance().logOut();
-            Intent logInIntent = new Intent(getApplicationContext(), LoginActivity.class);
-            logInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(logInIntent);
-            finish();
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Cerrar Sesión")
+                    .setMessage("¿Estás seguro?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            FirebaseAuth.getInstance().signOut();
+                            LoginManager.getInstance().logOut();
+                            Intent logInIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                            logInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(logInIntent);
+                            finish();
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
 
         if (nextFragment != null) {
