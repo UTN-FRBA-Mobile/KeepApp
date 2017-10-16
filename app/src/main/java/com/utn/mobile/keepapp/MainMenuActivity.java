@@ -194,11 +194,6 @@ public class MainMenuActivity extends AppCompatActivity implements
 
         if (id == R.id.nav_records) {
             nextFragment = new RecordsFragment();
-        }else if(id == R.id.nav_records_viejo){
-            //por el momento, dejo un acceso a la pantalla vieja
-            Intent recordsIntent = new Intent(getApplicationContext(), RecordsActivity.class);
-            startActivity(recordsIntent);
-            return true;
         }else if(id == R.id.nav_mapa){
             nextFragment = new MapaFragment();
         }else if(id == R.id.nav_sign_out) {
