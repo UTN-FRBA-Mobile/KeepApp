@@ -14,8 +14,11 @@ import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.utn.mobile.keepapp.domain.Ejercicio;
 
 import java.text.DateFormat;
@@ -30,6 +33,8 @@ public class AgregarEjercicio extends AppCompatActivity {
     Spinner spinner_unidades;
     EditText textoNotas;
     EditText textoResultado;
+    List<Ejercicio> listaEjercicios;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +47,37 @@ public class AgregarEjercicio extends AppCompatActivity {
         this.textoNotas = (EditText)findViewById(R.id.txt_notas_agregar_ejercicio);
         this.textoResultado = (EditText)findViewById(R.id.txt_resultado_agregar_ejercicio);
 
-        this.cargarSpinnerEjercicios();
+        this.cargarEjercicios();
         this.cargarSpinnerUnidades();
     }
 
+    private void cargarEjercicios() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ejercicios/");
 
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listaEjercicios = new ArrayList<>();
+                for(DataSnapshot dspEjercicio : dataSnapshot.getChildren()){
+                    Ejercicio ejercicio = dspEjercicio.getValue(Ejercicio.class);
+                    listaEjercicios.add(ejercicio);
+                }
+                cargarSpinnerEjercicios();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
 
     private void cargarSpinnerEjercicios()
     {
         List<String> spinnerArray =  new ArrayList<String>();
-        spinnerArray.add("5K");
-        spinnerArray.add("Clean & Jerk");
-        spinnerArray.add("Banco Plano");
+        for (Ejercicio ejercicio : listaEjercicios) {
+            spinnerArray.add(ejercicio.getNombre());
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
