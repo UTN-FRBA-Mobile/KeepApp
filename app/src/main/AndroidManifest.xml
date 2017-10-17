@@ -70,5 +70,4 @@
         </receiver>
         <service android:name=".GeofenceTransitionsIntentService" />
     </application>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 </manifest>
