@@ -87,6 +87,7 @@ public class RecordsFragment extends Fragment implements
         return thisView;
     }
 
+
     public void probarGeo(View view){
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(getContext(), "Google API Client not connected!", Toast.LENGTH_SHORT).show();

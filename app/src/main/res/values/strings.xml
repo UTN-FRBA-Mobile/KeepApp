@@ -30,9 +30,9 @@
     <string name="action_settings">Settings</string>
 
     <!-- API KEYS -->
+    <string name="google_maps_key_all">AIzaSyCl_nEGOpLCwzHb6j-NrIK7cGi8s7H2Fyk</string>
     <string name="google_maps_key_juli">AIzaSyCErnnNp-04Mz7JYbggm_Q9ggCyqf97xvI</string>
     <string name="google_maps_key_nico">AIzaSyCl_nEGOpLCwzHb6j-NrIK7cGi8s7H2Fyk</string>
-    <string name="google_maps_key_lucho"></string>
     <string name="google_maps_key_joel"></string>
     <string name="google_maps_key_fer">AIzaSyBWg-qtwnyRg4hk6jtaISZx6gdj6sV9wQg</string>
 </resources>

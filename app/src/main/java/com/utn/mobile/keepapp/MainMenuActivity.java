@@ -86,7 +86,7 @@ public class MainMenuActivity extends AppCompatActivity implements
 
         //selecciono la pantalla default
         if(savedInstanceState == null){
-            Fragment recordsFragment = new RecordsFragment();
+            Fragment recordsFragment = new RecordsAndExercisesFragment();
             MainMenuActivity.this.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter,R.anim.exit,R.anim.pop_enter,R.anim.pop_exit)
                     .replace(R.id.contentFragment, recordsFragment)
@@ -193,7 +193,7 @@ public class MainMenuActivity extends AppCompatActivity implements
         Fragment nextFragment = null;
 
         if (id == R.id.nav_records) {
-            nextFragment = new RecordsFragment();
+            nextFragment = new RecordsAndExercisesFragment();
         }else if(id == R.id.nav_mapa){
             nextFragment = new MapaFragment();
         }else if(id == R.id.nav_sign_out) {
