@@ -103,6 +103,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 });
             }
         });
+
+        final ImageButton closeButton = (ImageButton) getView().findViewById(R.id.closeButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                hideForm();
+            }
+        });
     }
 
     private void hideForm() {
@@ -165,6 +172,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapLongClick(LatLng point) {
+        inputName.setText("");
         currentMarker = mapa.addMarker(new MarkerOptions()
             .position(point)
             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));

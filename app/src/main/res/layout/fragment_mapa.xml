@@ -15,7 +15,7 @@
         android:id="@+id/markerForm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/base"
+        android:background="#BFFFFFFF"
         android:visibility="invisible"
         android:orientation="horizontal">
 
@@ -25,7 +25,8 @@
             android:layout_weight="6"
             android:layout_height="49.1dp"
             android:inputType="textVisiblePassword"
-            android:layout_marginBottom="15.2dp" />
+            android:layout_marginBottom="15.2dp"
+            android:layout_marginLeft="20dp"/>
         <ImageButton
             android:id="@+id/saveButton"
             android:layout_width="0dp"
@@ -40,6 +41,13 @@
             android:layout_height="49.1dp"
             android:background="@null"
             android:src="@drawable/ic_delete_black_24dp" />
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="49.1dp"
+            android:background="@null"
+            android:src="@drawable/ic_clear_24dp" />
 
     </LinearLayout>
 
