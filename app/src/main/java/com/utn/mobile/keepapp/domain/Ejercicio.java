@@ -9,6 +9,11 @@ public class Ejercicio implements Comparable<Ejercicio> {
     private String fecha;
     private Double valor;
     private String unidad;
+    private String imagen;
+
+    public String getImagen() { return imagen; }
+
+    public void setImagen(String imagen) { this.imagen = imagen; }
 
     public String getFecha() {
         return fecha;
