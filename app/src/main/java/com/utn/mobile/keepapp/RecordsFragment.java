@@ -4,7 +4,9 @@ package com.utn.mobile.keepapp;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -143,6 +145,8 @@ public class RecordsFragment extends Fragment implements
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios/".concat(currentUser.getUid()).concat("/ejercicios"));
 
+        final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+
         final ListView mi_lista = (ListView) thisView.findViewById(R.id.list_records);
         final Context context = getContext();
 
@@ -151,19 +155,28 @@ public class RecordsFragment extends Fragment implements
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Ejercicio> lista_ejercicios = new ArrayList<>();
 
+                int i = 1;
+
                 for(DataSnapshot dspEjercicio : dataSnapshot.getChildren()){
                     Ejercicio ejercicio = dspEjercicio.getValue(Ejercicio.class);
                     //ejercicio.setNombre(dspEjercicio.getKey());
+                    if(i < 4){
+                        editor.putString("ej"+i+"Name",ejercicio.getNombre());
+                        editor.putString("ej"+i+"Image",ejercicio.getImagen());
+                        i++;
+                    }
 
                     lista_ejercicios.add(ejercicio);
                 }
 
+                editor.commit();
+
                 RecordsFragment.filtrarRecords(lista_ejercicios);
-                Toast.makeText(getContext(),"Filtrado por records",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(),"Filtrado por records",Toast.LENGTH_SHORT).show();
 
                 // Para ordenar, por ahora alfabeticamente, pero se puede configurar cualquier criterio
                 Collections.sort(lista_ejercicios);
-                Toast.makeText(getContext(),"Ordenado alfabeticamente",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(),"Ordenado alfabeticamente",Toast.LENGTH_SHORT).show();
 
                 EjerciciosAdapter adapter = new EjerciciosAdapter(lista_ejercicios, context);
                 mi_lista.setAdapter(adapter);

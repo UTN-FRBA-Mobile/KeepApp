@@ -16,8 +16,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:id="@+id/textView"/>
+        android:layout_weight="0.5"/>
 
     <ImageButton
         android:id="@+id/newEjercicio1"

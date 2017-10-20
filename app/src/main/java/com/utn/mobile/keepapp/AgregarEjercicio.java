@@ -3,8 +3,10 @@ package com.utn.mobile.keepapp;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Ejercicio;
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,6 +46,12 @@ public class AgregarEjercicio extends AppCompatActivity {
     ImageView imagenEjercicio;
     List<Ejercicio> listaEjercicios;
 
+    private final String NEW_NATACION = "NEW_EJERCICIO_NATACION";
+    private final String NEW_5KM = "NEW_EJERCICIO_5KM";
+    private final String NEW_BANCO_PLANO = "NEW_EJERCICIO_BANCO_PLANO";
+
+    private String newEjercicioWidget = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +65,19 @@ public class AgregarEjercicio extends AppCompatActivity {
         this.textoResultado = (EditText)findViewById(R.id.txt_resultado_agregar_ejercicio);
         this.imagenEjercicio = (ImageView)findViewById(R.id.imagen_ejercicio);
 
+        String action = getIntent().getAction();
+        if (action != null) {
+            newEjercicioWidget = action;
+        }
+
         this.cargarEjercicios();
         this.escucharOnItemSelected();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
     }
 
     private void escucharOnItemSelected() {
@@ -108,6 +130,26 @@ public class AgregarEjercicio extends AppCompatActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.spinner_ejercicios.setAdapter(adapter);
+
+        String busqueda = "";
+        if(newEjercicioWidget != null){
+            switch (newEjercicioWidget) {
+                case NEW_NATACION:
+                    busqueda = "Natacion";
+                    break;
+                case NEW_5KM:
+                    busqueda = "5 KM";
+                    break;
+                case NEW_BANCO_PLANO:
+                    busqueda = "Banco Plano";
+                    break;
+            }
+            for (int position = 0; position < listaEjercicios.size(); position++){
+                if(listaEjercicios.get(position).getNombre().equalsIgnoreCase(busqueda)) {
+                    spinner_ejercicios.setSelection(position);
+                }
+            }
+        }
     }
 
     public void agregarEjercicio(View view) {
@@ -126,24 +168,33 @@ public class AgregarEjercicio extends AppCompatActivity {
 
         mDatabase.push().setValue(nuevoEjercicio);
 
-        updateWidget(nombreEjercicio);
+        //updateWidget(nombreEjercicio);
 
         this.finish();
 
     }
 
     public void updateWidget(String tipoEjercicio){
-        int ej1 = R.id.newEjercicio1;
-        int ej2 = R.id.newEjercicio2;
-        int ej3 = R.id.newEjercicio3;
+        //int ej1 = R.id.newEjercicio1;
+        //int ej2 = R.id.newEjercicio2;
+        //int ej3 = R.id.newEjercicio3;
 
         Context context = this;
+
+        /*SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putString("ej1", "lalala");
+        editor.commit();*/
+
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
         //remoteViews.setTextViewText(R.id.textView, tipoEjercicio);
-        remoteViews.setImageViewResource(ej1, R.drawable.ic_running);
+        //remoteViews.setImageViewResource(ej1, R.drawable.ic_running);
         appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
+        //TextView tvw = (TextView)findViewById(R.id.textViewWidget);
+
+        //Toast.makeText(this,tvw.getText().toString(),Toast.LENGTH_SHORT).show();
     }
 
 }
