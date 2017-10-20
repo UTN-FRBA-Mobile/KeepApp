@@ -5,9 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Ejercicio;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class EjerciciosAdapter extends BaseAdapter implements ListAdapter {
     TextView textview_ejercicio;
     TextView textview_record;
     TextView textview_fecha;
+    ImageView imageview_ejercicio;
 
     public EjerciciosAdapter(List<Ejercicio> list, Context context) {
         this.lista = list;
@@ -65,6 +68,10 @@ public class EjerciciosAdapter extends BaseAdapter implements ListAdapter {
         textview_fecha = (TextView)view.findViewById(R.id.texto_fecha_item_record);
         textview_fecha.setText(lista.get(position).getFecha());
 
+        imageview_ejercicio = (ImageView) view.findViewById(R.id.imagen_item_record);
+        if(lista.get(position).getImagen() != null) {
+            Picasso.with(this.contexto).load(lista.get(position).getImagen()).into(imageview_ejercicio);
+        }
         return view;
     }
 

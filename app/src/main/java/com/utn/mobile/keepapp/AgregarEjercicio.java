@@ -46,6 +46,8 @@ public class AgregarEjercicio extends AppCompatActivity {
     ImageView imagenEjercicio;
     List<Ejercicio> listaEjercicios;
 
+    String str_imagen = null;
+
     private final String NEW_NATACION = "NEW_EJERCICIO_NATACION";
     private final String NEW_5KM = "NEW_EJERCICIO_5KM";
     private final String NEW_BANCO_PLANO = "NEW_EJERCICIO_BANCO_PLANO";
@@ -89,6 +91,7 @@ public class AgregarEjercicio extends AppCompatActivity {
                 Ejercicio ejElegido = listaEjercicios.get(position);
                 unidades.setText(ejElegido.getUnidad());
                 Picasso.with(context).load(ejElegido.getImagen()).into(imageView);
+                str_imagen = ejElegido.getImagen();
             }
 
             @Override
@@ -165,6 +168,9 @@ public class AgregarEjercicio extends AppCompatActivity {
         String unidad = unidades.getText().toString();
 
         Ejercicio nuevoEjercicio = new Ejercicio(nombreEjercicio, fecha, resultado, unidad);
+
+        if(str_imagen != null)
+            nuevoEjercicio.setImagen(str_imagen);
 
         mDatabase.push().setValue(nuevoEjercicio);
 
