@@ -23,6 +23,7 @@ public class EjerciciosAdapter extends BaseAdapter implements ListAdapter {
     private Context contexto;
     TextView textview_ejercicio;
     TextView textview_record;
+    TextView textview_fecha;
 
     public EjerciciosAdapter(List<Ejercicio> list, Context context) {
         this.lista = list;
@@ -60,6 +61,9 @@ public class EjerciciosAdapter extends BaseAdapter implements ListAdapter {
 
         textview_record = (TextView)view.findViewById(R.id.texto_record_item_record);
         textview_record.setText("Mejor record: " + lista.get(position).getValor() + " " + lista.get(position).getUnidad());
+
+        textview_fecha = (TextView)view.findViewById(R.id.texto_fecha_item_record);
+        textview_fecha.setText(lista.get(position).getFecha());
 
         return view;
     }

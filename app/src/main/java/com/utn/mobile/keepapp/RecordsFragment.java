@@ -172,11 +172,9 @@ public class RecordsFragment extends Fragment implements
                 editor.commit();
 
                 RecordsFragment.filtrarRecords(lista_ejercicios);
-                //Toast.makeText(getContext(),"Filtrado por records",Toast.LENGTH_SHORT).show();
 
                 // Para ordenar, por ahora alfabeticamente, pero se puede configurar cualquier criterio
                 Collections.sort(lista_ejercicios);
-                //Toast.makeText(getContext(),"Ordenado alfabeticamente",Toast.LENGTH_SHORT).show();
 
                 EjerciciosAdapter adapter = new EjerciciosAdapter(lista_ejercicios, context);
                 mi_lista.setAdapter(adapter);
