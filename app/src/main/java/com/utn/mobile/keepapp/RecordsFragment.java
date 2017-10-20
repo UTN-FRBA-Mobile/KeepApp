@@ -41,16 +41,10 @@ import java.util.List;
 
 
 
-public class RecordsFragment extends Fragment implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        ResultCallback<Status>{
+public class RecordsFragment extends Fragment {
 
 
     public RecordsFragment() {}
-
-    private static ArrayList<Geofence> mGeofenceList;
-    private GoogleApiClient mGoogleApiClient;
 
     private View thisView;
 
@@ -63,83 +57,10 @@ public class RecordsFragment extends Fragment implements
 
         this.cargarListView();
 
-        FloatingActionButton fab = (FloatingActionButton) thisView.findViewById(R.id.boton_records);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i_agregar = new Intent(getContext(), AgregarEjercicio.class);
-                startActivity(i_agregar);
-            }
-        });
-
-        FloatingActionButton fabGeoF = (FloatingActionButton) thisView.findViewById(R.id.boton_geo);
-        fabGeoF.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                probarGeo(view);
-            }
-        });
-
-        //Lista vacia de geofences
-        mGeofenceList = new ArrayList<>();
-        populateGeofenceList();
-        // Kick off the request to build GoogleApiClient.
-        buildGoogleApiClient();
 
         return thisView;
     }
 
-
-    public void probarGeo(View view){
-        if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(getContext(), "Google API Client not connected!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            LocationServices.GeofencingApi.addGeofences(
-                    mGoogleApiClient,
-                    getGeofencingRequest(),
-                    getGeofencePendingIntent()
-            ).setResultCallback(this); // Result processed in onResult().
-            Toast.makeText(getContext(),"Geofencing started", Toast.LENGTH_LONG).show();
-        } catch (SecurityException securityException) {
-            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
-        }
-    }
-
-
-
-    public void populateGeofenceList() {
-        mGeofenceList.add(new Geofence.Builder()
-                .setRequestId("Mi geofence de prueba")
-                .setCircularRegion(-34.606579, -58.435360, 100)
-                .setExpirationDuration(0)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(mGeofenceList);
-        return builder.build();
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
-        return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
 
     public void cargarListView(){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -209,48 +130,6 @@ public class RecordsFragment extends Fragment implements
     }
 
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (!mGoogleApiClient.isConnecting() || !mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnecting() || mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onResult(@NonNull Status status) {
-        if (status.isSuccess()) {
-            Toast.makeText(getContext(), "Geofences Added", Toast.LENGTH_SHORT).show();
-        } else {
-            // Get the status code for the error and log it using a user-friendly message.
-            String errorMessage = "Error función onResult"; //CAMBIAR?
-            Log.e("RecordsFragment", errorMessage);
-        }
-    }
 
     @Override
     public void onResume() {

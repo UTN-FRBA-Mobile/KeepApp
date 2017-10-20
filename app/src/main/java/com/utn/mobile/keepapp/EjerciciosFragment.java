@@ -41,15 +41,6 @@ public class EjerciciosFragment extends Fragment {
 
         this.cargarListView();
 
-        FloatingActionButton fab = (FloatingActionButton) thisView.findViewById(R.id.boton_records);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i_agregar = new Intent(getContext(), AgregarEjercicio.class);
-                startActivity(i_agregar);
-            }
-        });
-
         return thisView;
     }
 
