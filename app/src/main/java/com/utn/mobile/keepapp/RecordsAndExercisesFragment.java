@@ -159,7 +159,7 @@ public class RecordsAndExercisesFragment extends Fragment implements
 
     public void populateGeofenceList() {
         mGeofenceList.add(new Geofence.Builder()
-                .setRequestId("Mi geofence de prueba")
+                .setRequestId("Prueba2")
                 .setCircularRegion(-34.606579, -58.435360, 100)
                 .setExpirationDuration(0)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
