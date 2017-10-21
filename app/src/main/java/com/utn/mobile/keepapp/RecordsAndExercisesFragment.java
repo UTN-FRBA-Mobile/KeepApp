@@ -43,6 +43,8 @@ public class RecordsAndExercisesFragment extends Fragment implements
     private static ArrayList<Geofence> mGeofenceList;
     private GoogleApiClient mGoogleApiClient;
 
+    private PendingIntent mGeofencePendingIntent;
+
     public RecordsAndExercisesFragment() {
     }
 
@@ -160,7 +162,7 @@ public class RecordsAndExercisesFragment extends Fragment implements
     public void populateGeofenceList() {
         mGeofenceList.add(new Geofence.Builder()
                 .setRequestId("Prueba2")
-                .setCircularRegion(-34.606579, -58.435360, 100)
+                .setCircularRegion(-34.606587, -58.435322, 1000)
                 .setExpirationDuration(0)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         Geofence.GEOFENCE_TRANSITION_EXIT)
@@ -182,10 +184,36 @@ public class RecordsAndExercisesFragment extends Fragment implements
         return builder.build();
     }
 
+    /*
     private PendingIntent getGeofencePendingIntent() {
         Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
         return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }*/
+
+    private PendingIntent getGeofencePendingIntent() {
+
+        // If the PendingIntent already exists
+        if (null != mGeofencePendingIntent) {
+
+            // Return the existing intent
+            return mGeofencePendingIntent;
+
+            // If no PendingIntent exists
+        } else {
+
+            // Create an Intent pointing to the IntentService
+            Intent intent = new Intent(getContext(), GeofenceReceiver.class);
+//            Intent intent = new Intent(context, ReceiveTransitionsIntentService.class);
+            /*
+             * Return a PendingIntent to start the IntentService.
+             * Always create a PendingIntent sent to Location Services
+             * with FLAG_UPDATE_CURRENT, so that sending the PendingIntent
+             * again updates the original. Otherwise, Location Services
+             * can't match the PendingIntent to requests made with it.
+             */
+            return PendingIntent.getBroadcast(getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
     }
 
 

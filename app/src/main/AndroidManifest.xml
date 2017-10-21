@@ -73,5 +73,10 @@
             android:name=".GeofenceTransitionsIntentService"
             android:exported="true"/>
     </application>
-
+    <receiver android:name="com.utn.mobile.keepapp.GeofenceReceiver"
+        android:exported="true">
+        <intent-filter >
+            <action android:name="com.utn.mobile.keepapp.GeofenceReceiver.ACTION_RECEIVE_GEOFENCE"/>
+        </intent-filter>
+    </receiver>
 </manifest>
