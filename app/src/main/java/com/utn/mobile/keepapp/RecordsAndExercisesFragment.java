@@ -31,19 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RecordsAndExercisesFragment extends Fragment implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        ResultCallback<Status> {
+public class RecordsAndExercisesFragment extends Fragment{
 
     private AppBarLayout appBar;
     private TabLayout tabs;
     private ViewPager viewPager;
-
-    private static ArrayList<Geofence> mGeofenceList;
-    private GoogleApiClient mGoogleApiClient;
-
-    private PendingIntent mGeofencePendingIntent;
 
     public RecordsAndExercisesFragment() {
     }
@@ -62,29 +54,6 @@ public class RecordsAndExercisesFragment extends Fragment implements
         viewPager = (ViewPager) rootView.findViewById(R.id.pagerRecords);
         setupViewPager(viewPager);
         tabs.setupWithViewPager(viewPager);
-
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.boton_records);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i_agregar = new Intent(getContext(), AgregarEjercicio.class);
-                startActivity(i_agregar);
-            }
-        });
-
-        FloatingActionButton fabGeoF = (FloatingActionButton) rootView.findViewById(R.id.boton_geo);
-        fabGeoF.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                probarGeo(view);
-            }
-        });
-
-        //Lista vacia de geofences
-        mGeofenceList = new ArrayList<>();
-        populateGeofenceList();
-        // Kick off the request to build GoogleApiClient.
-        buildGoogleApiClient();
 
         return rootView;
     }
@@ -139,124 +108,5 @@ public class RecordsAndExercisesFragment extends Fragment implements
         }
     }
 
-
-
-    public void probarGeo(View view){
-        if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(getContext(), "Google API Client not connected!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            LocationServices.GeofencingApi.addGeofences(
-                    mGoogleApiClient,
-                    getGeofencingRequest(),
-                    getGeofencePendingIntent()
-            ).setResultCallback(this); // Result processed in onResult().
-            Toast.makeText(getContext(),"Geofencing started", Toast.LENGTH_LONG).show();
-        } catch (SecurityException securityException) {
-            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
-        }
-    }
-
-    public void populateGeofenceList() {
-        mGeofenceList.add(new Geofence.Builder()
-                .setRequestId("Prueba2")
-                .setCircularRegion(-34.606587, -58.435322, 1000)
-                .setExpirationDuration(0)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(mGeofenceList);
-        return builder.build();
-    }
-
-    /*
-    private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
-        return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }*/
-
-    private PendingIntent getGeofencePendingIntent() {
-
-        // If the PendingIntent already exists
-        if (null != mGeofencePendingIntent) {
-
-            // Return the existing intent
-            return mGeofencePendingIntent;
-
-            // If no PendingIntent exists
-        } else {
-
-            // Create an Intent pointing to the IntentService
-            Intent intent = new Intent(getContext(), GeofenceReceiver.class);
-//            Intent intent = new Intent(context, ReceiveTransitionsIntentService.class);
-            /*
-             * Return a PendingIntent to start the IntentService.
-             * Always create a PendingIntent sent to Location Services
-             * with FLAG_UPDATE_CURRENT, so that sending the PendingIntent
-             * again updates the original. Otherwise, Location Services
-             * can't match the PendingIntent to requests made with it.
-             */
-            return PendingIntent.getBroadcast(getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (!mGoogleApiClient.isConnecting() || !mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnecting() || mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onResult(@NonNull Status status) {
-        if (status.isSuccess()) {
-            Toast.makeText(getContext(), "Geofences Added", Toast.LENGTH_SHORT).show();
-        } else {
-            // Get the status code for the error and log it using a user-friendly message.
-            String errorMessage = "Error función onResult"; //CAMBIAR?
-            Log.e("RecordsFragment", errorMessage);
-        }
-    }
 
 }
