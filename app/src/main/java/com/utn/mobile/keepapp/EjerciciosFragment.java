@@ -140,10 +140,11 @@ public class EjerciciosFragment extends Fragment  implements
         }
 
         try {
+            mGeofencePendingIntent = getGeofencePendingIntent();
             LocationServices.GeofencingApi.addGeofences(
                     mGoogleApiClient,
                     getGeofencingRequest(),
-                    getGeofencePendingIntent()
+                    mGeofencePendingIntent
             ).setResultCallback(this); // Result processed in onResult().
             Toast.makeText(getContext(),"Geofencing started", Toast.LENGTH_LONG).show();
         } catch (SecurityException securityException) {
@@ -154,7 +155,7 @@ public class EjerciciosFragment extends Fragment  implements
     public void populateGeofenceList() {
         mGeofenceList.add(new Geofence.Builder()
                 .setRequestId("Prueba2")
-                .setCircularRegion(-34.606587, -58.435322, 1000)
+                .setCircularRegion(-34.598584, -58.420066, 150)
                 .setExpirationDuration(0)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         Geofence.GEOFENCE_TRANSITION_EXIT)
@@ -176,38 +177,14 @@ public class EjerciciosFragment extends Fragment  implements
         return builder.build();
     }
 
-    /*
     private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
-        return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }*/
-
-    private PendingIntent getGeofencePendingIntent() {
-
-        // If the PendingIntent already exists
         if (null != mGeofencePendingIntent) {
-
-            // Return the existing intent
             return mGeofencePendingIntent;
-
-            // If no PendingIntent exists
         } else {
-
-            // Create an Intent pointing to the IntentService
-            Intent intent = new Intent(getContext(), GeofenceReceiver.class);
-//            Intent intent = new Intent(context, ReceiveTransitionsIntentService.class);
-            /*
-             * Return a PendingIntent to start the IntentService.
-             * Always create a PendingIntent sent to Location Services
-             * with FLAG_UPDATE_CURRENT, so that sending the PendingIntent
-             * again updates the original. Otherwise, Location Services
-             * can't match the PendingIntent to requests made with it.
-             */
-            return PendingIntent.getBroadcast(getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
+            return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
-
 
     @Override
     public void onStart() {
