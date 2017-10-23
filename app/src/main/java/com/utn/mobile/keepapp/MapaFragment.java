@@ -44,6 +44,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     private Activity activity;
     private Location myLocation;
     private LinearLayout form;
+    private LinearLayout help;
     private DatabaseReference mDatabase;
     private EditText inputName;
 
@@ -72,6 +73,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         form = (LinearLayout) getView().findViewById(R.id.markerForm);
+        help = (LinearLayout) getView().findViewById(R.id.helpLayout);
         inputName = (EditText) getView().findViewById(R.id.inputName);
 
         final ImageButton saveButton = (ImageButton) getView().findViewById(R.id.saveButton);
@@ -123,6 +125,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void showForm() {
+        help.setVisibility(View.INVISIBLE);
         form.setVisibility(View.VISIBLE);
     }
 
@@ -164,7 +167,9 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void drawSavedGyms(DataSnapshot dataSnapshot) {
+        boolean hasElements = false;
         for(DataSnapshot dspGimnasio : dataSnapshot.getChildren()){
+            hasElements = true;
             Gimnasio gimnasio = dspGimnasio.getValue(Gimnasio.class);
             gimnasio.setFirebaseId(dspGimnasio.getKey());
 
@@ -174,6 +179,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
             );
             marker.setTag(gimnasio);
         }
+        if(hasElements) help.setVisibility(View.INVISIBLE);
     }
 
     @Override

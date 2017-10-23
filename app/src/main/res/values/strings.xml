@@ -20,6 +20,9 @@
     <!-- Strings related to add exercise -->
     <string name="action_save_exercise">Guardar</string>
 
+    <!-- Strings related to map -->
+    <string name="map_help">Para registrar un gimnasio, mantené apretado en el mapa sobre la ubicación del mismo</string>
+
     <!-- FACEBOOK -->
     <string name="facebook_app_id">474466269585951</string>
     <string name="fb_login_protocol_scheme">fb474466269585951</string>
