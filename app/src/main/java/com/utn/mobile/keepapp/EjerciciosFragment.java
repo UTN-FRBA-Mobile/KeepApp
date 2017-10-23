@@ -135,7 +135,7 @@ public class EjerciciosFragment extends Fragment  implements
 
     public void probarGeo(View view){
         if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(getContext(), "Google API Client not connected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Google API Client not connected", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -148,7 +148,7 @@ public class EjerciciosFragment extends Fragment  implements
             ).setResultCallback(this); // Result processed in onResult().
             Toast.makeText(getContext(),"Geofencing started", Toast.LENGTH_LONG).show();
         } catch (SecurityException securityException) {
-            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
+            Toast.makeText(getContext(),"Error en permisos de ubicación", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -220,11 +220,9 @@ public class EjerciciosFragment extends Fragment  implements
     @Override
     public void onResult(@NonNull Status status) {
         if (status.isSuccess()) {
-            Toast.makeText(getContext(), "Geofences Added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Geofences agregadas", Toast.LENGTH_SHORT).show();
         } else {
-            // Get the status code for the error and log it using a user-friendly message.
-            String errorMessage = "Error función onResult"; //CAMBIAR?
-            Log.e("RecordsFragment", errorMessage);
+            Toast.makeText(getContext(), "Error al agregar Geofences", Toast.LENGTH_SHORT).show();
         }
     }
 }
