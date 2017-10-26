@@ -181,8 +181,10 @@ public class EjerciciosFragment extends Fragment  implements
         if (null != mGeofencePendingIntent) {
             return mGeofencePendingIntent;
         } else {
-            Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
-            return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            //Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
+            //return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent intent = new Intent(getContext(), GeofenceReceiver.class);
+            return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 
