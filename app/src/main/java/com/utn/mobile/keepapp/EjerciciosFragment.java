@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.utn.mobile.keepapp.domain.Ejercicio;
+import com.utn.mobile.keepapp.domain.Gimnasio;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,8 @@ public class EjerciciosFragment extends Fragment  implements
     private GoogleApiClient mGoogleApiClient;
 
     private PendingIntent mGeofencePendingIntent;
+
+    private DatabaseReference mDatabase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -153,13 +156,29 @@ public class EjerciciosFragment extends Fragment  implements
     }
 
     public void populateGeofenceList() {
-        mGeofenceList.add(new Geofence.Builder()
-                .setRequestId("Prueba2")
-                .setCircularRegion(-34.598584, -58.420066, 150)
-                .setExpirationDuration(0)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference("usuarios/".concat(currentFirebaseUser.getUid()).concat("/gimnasios"));
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean hasElements = false;
+                for(DataSnapshot dspGimnasio : dataSnapshot.getChildren()){
+                    hasElements = true;
+                    Gimnasio gimnasio = dspGimnasio.getValue(Gimnasio.class);
+                    //gimnasio.setFirebaseId(dspGimnasio.getKey());
+                    mGeofenceList.add(new Geofence.Builder()
+                            .setRequestId(gimnasio.getNombre())
+                            .setCircularRegion(gimnasio.getLatitud(), gimnasio.getLongitud(), 100)
+                            .setExpirationDuration(0)
+                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                    Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .build());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     protected synchronized void buildGoogleApiClient() {
