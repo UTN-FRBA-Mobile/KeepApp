@@ -1,14 +1,15 @@
 package com.utn.mobile.keepapp;
 
+import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
+import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +20,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +34,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Ejercicio;
 
-import org.w3c.dom.Text;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,6 +51,7 @@ public class AgregarEjercicio extends AppCompatActivity {
     EditText textoResultado;
     ImageView imagenEjercicio;
     List<Ejercicio> listaEjercicios;
+    AppCompatButton btnSave;
 
     String str_imagen = null;
 
@@ -53,6 +60,7 @@ public class AgregarEjercicio extends AppCompatActivity {
     private final String NEW_BANCO_PLANO = "NEW_EJERCICIO_BANCO_PLANO";
 
     private String newEjercicioWidget = null;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -66,6 +74,14 @@ public class AgregarEjercicio extends AppCompatActivity {
         this.textoNotas = (EditText)findViewById(R.id.txt_notas_agregar_ejercicio);
         this.textoResultado = (EditText)findViewById(R.id.txt_resultado_agregar_ejercicio);
         this.imagenEjercicio = (ImageView)findViewById(R.id.imagen_ejercicio);
+        this.progressDialog = new ProgressDialog(this);
+        this.btnSave = (AppCompatButton) findViewById(R.id.btn_guardar_agregar_ejercicio);
+        this.btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                agregarEjercicio();
+            }
+        });
 
         String action = getIntent().getAction();
         if (action != null) {
@@ -155,7 +171,7 @@ public class AgregarEjercicio extends AppCompatActivity {
         }
     }
 
-    public void agregarEjercicio(View view) {
+    public void agregarEjercicio() {
         FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("usuarios/".concat(currentFirebaseUser.getUid()).concat("/ejercicios"));
 
@@ -174,10 +190,68 @@ public class AgregarEjercicio extends AppCompatActivity {
 
         mDatabase.push().setValue(nuevoEjercicio);
 
-        //updateWidget(nombreEjercicio);
+        onExerciseSaved();
 
-        this.finish();
+        //this.finish();
 
+    }
+
+    private void onExerciseSaved(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Cargaste tu ejercicio con éxito")
+                .setTitle("Felicitaciones");
+        builder.setPositiveButton("compartir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                progressDialog.show();
+                //FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                AccessToken fbToken = AccessToken.getCurrentAccessToken();
+                if(fbToken.isExpired()){
+                    Toast.makeText(AgregarEjercicio.this, "Ocurrió un error, intente en unos instantes", Toast.LENGTH_LONG).show();
+                    AccessToken.refreshCurrentAccessTokenAsync();
+                    return;
+                }
+                GraphRequest request = GraphRequest.newGraphPathRequest(fbToken, "me/friends",
+                    new GraphRequest.Callback() {
+                        @Override
+                        public void onCompleted(GraphResponse response) {
+                            progressDialog.hide();
+                            Log.d("RESPONSE", response.toString());
+                            try {
+                                JSONArray users = response.getJSONObject().getJSONArray("data");
+                                Toast.makeText(AgregarEjercicio.this, "Se encontraron "+users.length()+" amigos", Toast.LENGTH_LONG).show();
+                            }catch(JSONException e){
+                                Toast.makeText(AgregarEjercicio.this, "Error en formato de JSON", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,installed");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                finish();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     public void updateWidget(String tipoEjercicio){

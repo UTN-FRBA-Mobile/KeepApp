@@ -69,7 +69,7 @@ public class RecordsAndExercisesFragment extends Fragment{
     private void setupViewPager(ViewPager viewPager) {
         SectionsAdapter adapter = new SectionsAdapter(getFragmentManager());
         adapter.addFragment(new RecordsFragment(), "Records");
-        adapter.addFragment(new EjerciciosFragment(), "Ejercicios"); //TODO crear fragmento
+        adapter.addFragment(new EjerciciosFragment(), "Ejercicios");
         viewPager.setAdapter(adapter);
     }
 

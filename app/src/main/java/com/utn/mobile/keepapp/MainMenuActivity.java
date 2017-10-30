@@ -79,7 +79,7 @@ public class MainMenuActivity extends AppCompatActivity implements
                         .replace(R.id.contentFragment, userFragment)
                         .addToBackStack(String.valueOf(userFragment.getId()))
                         .commit();
-                getSupportActionBar().setTitle("Perfil");
+
                 drawer.closeDrawer(GravityCompat.START);
             }
         });

@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity
 
         // Facebook
         callbackManager = CallbackManager.Factory.create();
-        fbLoginButton.setReadPermissions("email", "public_profile");
+        fbLoginButton.setReadPermissions("email", "public_profile", "user_friends");
 
         // Register your callback//
         fbLoginButton.registerCallback(callbackManager,
