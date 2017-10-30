@@ -68,16 +68,9 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
-<!--
+
         <service
             android:name=".GeofenceTransitionsIntentService"
             android:exported="true"/>
--->
-        <receiver android:name="GeofenceReceiver"
-            android:exported="true">
-            <intent-filter >
-                <action android:name="com.utn.mobile.keepapp.GeofenceReceiver.ACTION_RECEIVE_GEOFENCE"/>
-            </intent-filter>
-            </receiver>
     </application>
 </manifest>

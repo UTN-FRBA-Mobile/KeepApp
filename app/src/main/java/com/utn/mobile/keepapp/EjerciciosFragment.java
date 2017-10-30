@@ -144,6 +144,7 @@ public class EjerciciosFragment extends Fragment  implements
 
         try {
             mGeofencePendingIntent = getGeofencePendingIntent();
+            LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mGeofencePendingIntent);
             LocationServices.GeofencingApi.addGeofences(
                     mGoogleApiClient,
                     getGeofencingRequest(),
@@ -169,7 +170,7 @@ public class EjerciciosFragment extends Fragment  implements
                     mGeofenceList.add(new Geofence.Builder()
                             .setRequestId(gimnasio.getNombre())
                             .setCircularRegion(gimnasio.getLatitud(), gimnasio.getLongitud(), 100)
-                            .setExpirationDuration(0)
+                            .setExpirationDuration(9999999)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                                     Geofence.GEOFENCE_TRANSITION_EXIT)
                             .build());
@@ -192,6 +193,7 @@ public class EjerciciosFragment extends Fragment  implements
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        //builder.setInitialTrigger(0);
         builder.addGeofences(mGeofenceList);
         return builder.build();
     }
@@ -200,10 +202,10 @@ public class EjerciciosFragment extends Fragment  implements
         if (null != mGeofencePendingIntent) {
             return mGeofencePendingIntent;
         } else {
-            //Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
-            //return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            Intent intent = new Intent(getContext(), GeofenceReceiver.class);
-            return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent intent = new Intent(getContext(), GeofenceTransitionsIntentService.class);
+            return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            //Intent intent = new Intent(getContext(), GeofenceReceiver.class);
+            //return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 

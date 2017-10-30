@@ -9,6 +9,8 @@ import android.media.RingtoneManager;
 import android.os.Handler;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
+
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
 
@@ -43,16 +45,23 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         final int geofenceTransition = event.getGeofenceTransition();
 
-        if (geofenceTransition == 1) {
-            handler.post(new Runnable() {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            /*handler.post(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), "Adentro", Toast.LENGTH_SHORT).show();
                     notificar("¡ADENTRO!");
                 }
+            });*/
+        }else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //Toast.makeText(getApplicationContext(), "Afuera", Toast.LENGTH_SHORT).show();
+                    notificar("¡Recorda cargar tus ejercicios!");
+                }
             });
         }
-
         else {
             // Log the error.
             handler.post(new Runnable() {
