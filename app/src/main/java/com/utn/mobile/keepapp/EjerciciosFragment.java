@@ -1,5 +1,6 @@
 package com.utn.mobile.keepapp;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import com.utn.mobile.keepapp.domain.Gimnasio;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by garci on 20/10/2017.
@@ -56,6 +58,8 @@ public class EjerciciosFragment extends Fragment  implements
 
     private DatabaseReference mDatabase;
 
+    Semaphore sem_geofencing;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,6 +77,9 @@ public class EjerciciosFragment extends Fragment  implements
             }
         });
 
+
+        sem_geofencing = new Semaphore(0);
+
         FloatingActionButton fabGeoF = (FloatingActionButton) thisView.findViewById(R.id.boton_geo);
         fabGeoF.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +93,13 @@ public class EjerciciosFragment extends Fragment  implements
         populateGeofenceList();
         // Kick off the request to build GoogleApiClient.
         buildGoogleApiClient();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                probarGeo(null);
+            }
+        }).start();
 
         return thisView;
     }
@@ -138,22 +152,40 @@ public class EjerciciosFragment extends Fragment  implements
 
     public void probarGeo(View view){
         if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(getContext(), "Google API Client not connected", Toast.LENGTH_SHORT).show();
-            return;
+            try {
+                sem_geofencing.acquire();
+                Thread.sleep(3000);
+            }catch (Exception e){
+                createToast(EjerciciosFragment.this.getActivity(), "Error de semaforo");
+                return;
+            }
         }
 
-        try {
-            mGeofencePendingIntent = getGeofencePendingIntent();
-            LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mGeofencePendingIntent);
-            LocationServices.GeofencingApi.addGeofences(
-                    mGoogleApiClient,
-                    getGeofencingRequest(),
-                    mGeofencePendingIntent
-            ).setResultCallback(this); // Result processed in onResult().
-            Toast.makeText(getContext(),"Geofencing started", Toast.LENGTH_LONG).show();
-        } catch (SecurityException securityException) {
-            Toast.makeText(getContext(),"Error en permisos de ubicación", Toast.LENGTH_LONG).show();
+        if (!mGoogleApiClient.isConnected()) {
+            createToast(EjerciciosFragment.this.getActivity(), "Google API Client not connected");
+        }else {
+            try {
+                mGeofencePendingIntent = getGeofencePendingIntent();
+                LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mGeofencePendingIntent);
+                LocationServices.GeofencingApi.addGeofences(
+                        mGoogleApiClient,
+                        getGeofencingRequest(),
+                        mGeofencePendingIntent
+                ).setResultCallback(this); // Result processed in onResult().
+                createToast(EjerciciosFragment.this.getActivity(), "Geofencing started");
+            } catch (SecurityException securityException) {
+                createToast(EjerciciosFragment.this.getActivity(), "Error en permisos de ubicación");
+            }
         }
+    }
+
+    public void createToast(final Activity activity, final String texto){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, texto, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void populateGeofenceList() {
@@ -227,7 +259,7 @@ public class EjerciciosFragment extends Fragment  implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        this.sem_geofencing.release();
     }
 
     @Override
@@ -237,15 +269,16 @@ public class EjerciciosFragment extends Fragment  implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        this.mGoogleApiClient = null;
+        this.sem_geofencing.release();
     }
 
     @Override
     public void onResult(@NonNull Status status) {
         if (status.isSuccess()) {
-            Toast.makeText(getContext(), "Geofences agregadas", Toast.LENGTH_SHORT).show();
+            createToast(EjerciciosFragment.this.getActivity(), "Geofences agregadas");
         } else {
-            Toast.makeText(getContext(), "Error al agregar Geofences", Toast.LENGTH_SHORT).show();
+            createToast(EjerciciosFragment.this.getActivity(), "Error al agregar Geofences");
         }
     }
 }
