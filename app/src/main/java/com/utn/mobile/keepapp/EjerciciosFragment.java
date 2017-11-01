@@ -90,16 +90,9 @@ public class EjerciciosFragment extends Fragment  implements
 
         //Lista vacia de geofences
         mGeofenceList = new ArrayList<>();
-        populateGeofenceList();
         // Kick off the request to build GoogleApiClient.
         buildGoogleApiClient();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                probarGeo(null);
-            }
-        }).start();
 
         return thisView;
     }
@@ -258,6 +251,18 @@ public class EjerciciosFragment extends Fragment  implements
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                populateGeofenceList();
+                probarGeo(null);
+            }
+        }).start();
+    }
+
+    @Override
     public void onConnected(@Nullable Bundle bundle) {
         this.sem_geofencing.release();
     }
@@ -269,7 +274,6 @@ public class EjerciciosFragment extends Fragment  implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        this.mGoogleApiClient = null;
         this.sem_geofencing.release();
     }
 
