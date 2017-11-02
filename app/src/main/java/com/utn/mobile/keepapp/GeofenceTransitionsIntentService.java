@@ -49,14 +49,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    //Toast.makeText(getApplicationContext(), "Afuera", Toast.LENGTH_SHORT).show();
                     notificar("¡Recorda cargar tus ejercicios!");
-                }
-            });
-        } else {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Transición desconocida: " + String.valueOf(geofenceTransition), Toast.LENGTH_SHORT).show();
                 }
             });
         }
