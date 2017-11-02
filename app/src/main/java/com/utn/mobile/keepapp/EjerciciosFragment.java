@@ -80,14 +80,6 @@ public class EjerciciosFragment extends Fragment  implements
 
         sem_geofencing = new Semaphore(0);
 
-        FloatingActionButton fabGeoF = (FloatingActionButton) thisView.findViewById(R.id.boton_geo);
-        fabGeoF.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                probarGeo(view);
-            }
-        });
-
         //Lista vacia de geofences
         mGeofenceList = new ArrayList<>();
         // Kick off the request to build GoogleApiClient.
@@ -165,7 +157,6 @@ public class EjerciciosFragment extends Fragment  implements
                         getGeofencingRequest(),
                         mGeofencePendingIntent
                 ).setResultCallback(this); // Result processed in onResult().
-                createToast(EjerciciosFragment.this.getActivity(), "Geofencing started");
             } catch (SecurityException securityException) {
                 createToast(EjerciciosFragment.this.getActivity(), "Error en permisos de ubicación");
             }
@@ -279,9 +270,7 @@ public class EjerciciosFragment extends Fragment  implements
 
     @Override
     public void onResult(@NonNull Status status) {
-        if (status.isSuccess()) {
-            createToast(EjerciciosFragment.this.getActivity(), "Geofences agregadas");
-        } else {
+        if (!status.isSuccess()) {
             createToast(EjerciciosFragment.this.getActivity(), "Error al agregar Geofences");
         }
     }

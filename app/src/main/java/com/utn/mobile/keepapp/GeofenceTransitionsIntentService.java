@@ -45,25 +45,14 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         final int geofenceTransition = event.getGeofenceTransition();
 
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            /*handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Adentro", Toast.LENGTH_SHORT).show();
-                    notificar("¡ADENTRO!");
-                }
-            });*/
-        }else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    //Toast.makeText(getApplicationContext(), "Afuera", Toast.LENGTH_SHORT).show();
                     notificar("¡Recorda cargar tus ejercicios!");
                 }
             });
-        }
-        else {
-            // Log the error.
+        } else {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
