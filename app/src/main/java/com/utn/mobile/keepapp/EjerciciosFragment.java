@@ -146,6 +146,10 @@ public class EjerciciosFragment extends Fragment  implements
             }
         }
 
+        if(mGeofenceList.size() == 0){
+            return;
+        }
+
         if (!mGoogleApiClient.isConnected()) {
             createToast(EjerciciosFragment.this.getActivity(), "Google API Client not connected");
         }else {

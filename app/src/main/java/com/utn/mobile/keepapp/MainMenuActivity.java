@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -12,13 +13,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -194,7 +201,7 @@ public class MainMenuActivity extends AppCompatActivity implements
 
         if (id == R.id.nav_records) {
             nextFragment = new RecordsAndExercisesFragment();
-        }else if(id == R.id.nav_mapa){
+        }else if(id == R.id.nav_mapa) {
             nextFragment = new MapaFragment();
         }else if(id == R.id.nav_sign_out) {
             new AlertDialog.Builder(this)
@@ -240,5 +247,54 @@ public class MainMenuActivity extends AppCompatActivity implements
         }
     }
 
+    public void deleteAccount(View view) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Borrar usuario")
+                .setMessage("¿Estás seguro que deseas borrar tu usuario?")
+                .setPositiveButton("Si", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteFireBaseUser();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    public void deleteFireBaseUser(){
+        // Falta checkear si inició sesion hace mucho
+
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainMenuActivity.this, "Cuenta borrada exitosamente", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    FirebaseAuth.getInstance().signOut();
+                    LoginManager.getInstance().logOut();
+                    Intent logInIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    logInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(logInIntent);
+                    finish();
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainMenuActivity.this, "Error al borrar la usuario", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        });
+
+    }
 
 }
