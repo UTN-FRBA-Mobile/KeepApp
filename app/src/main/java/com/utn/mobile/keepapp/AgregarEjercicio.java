@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -65,6 +66,11 @@ public class AgregarEjercicio extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(FirebaseAuth.getInstance().getCurrentUser() == null ) {
+            Intent i_login = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i_login);
+            finish();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_ejercicio);
         setTitle("Nuevo ejercicio");
