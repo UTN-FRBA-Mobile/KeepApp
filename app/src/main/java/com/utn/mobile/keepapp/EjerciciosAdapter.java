@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Ejercicio;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -66,8 +68,16 @@ public class EjerciciosAdapter extends BaseAdapter implements ListAdapter {
         textview_record.setText("Mejor record: " + lista.get(position).getValor() + " " + lista.get(position).getUnidad());
 
         textview_fecha = (TextView)view.findViewById(R.id.texto_fecha_item_record);
+        String str_fecha = "-";
+        try {
+            SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd");
+            Date fecha = dateFormat1.parse(lista.get(position).getFecha());
+            SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
+            str_fecha = dateFormat2.format(fecha);
+        }catch (Exception e){
 
-        textview_fecha.setText(lista.get(position).getFecha());
+        }
+        textview_fecha.setText(str_fecha);
 
         imageview_ejercicio = (ImageView) view.findViewById(R.id.imagen_item_record);
         if(lista.get(position).getImagen() != null) {
