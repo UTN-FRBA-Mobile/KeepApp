@@ -66,6 +66,7 @@ public class EjerciciosAdapter extends BaseAdapter implements ListAdapter {
         textview_record.setText("Mejor record: " + lista.get(position).getValor() + " " + lista.get(position).getUnidad());
 
         textview_fecha = (TextView)view.findViewById(R.id.texto_fecha_item_record);
+
         textview_fecha.setText(lista.get(position).getFecha());
 
         imageview_ejercicio = (ImageView) view.findViewById(R.id.imagen_item_record);

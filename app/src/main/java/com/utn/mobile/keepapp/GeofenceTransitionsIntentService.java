@@ -24,6 +24,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
     private Handler handler;
     Context mContext;
 
+    public static boolean vibrar = true;
+    public static boolean sonar = true;
+
     public GeofenceTransitionsIntentService() {
         super(TAG);  // use TAG to name the IntentService worker thread
     }
@@ -64,8 +67,14 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 .setSmallIcon(R.mipmap.keepapp_launcher)
                 .setContentTitle("Saliste del gimnasio")
                 .setContentText(mensaje);
-        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+
+        if(sonar) {
+            mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        }
+
+        if(vibrar) {
+            mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+        }
 
         Notification notification = mBuilder.build();
 

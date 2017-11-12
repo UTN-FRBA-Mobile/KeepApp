@@ -1,0 +1,59 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_mapa"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.utn.mobile.keepapp.MapaFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Orden de ejercicios"
+                android:textColor="@color/black"
+                android:textSize="17dp"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/spinner_orden"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/switch_vibrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vibrar (notificaciones)"
+            android:layout_margin="10dp"
+            android:textSize="17dp" />
+
+        <Switch
+            android:id="@+id/switch_sonar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sonar (notificaciones)"
+            android:layout_margin="10dp"
+            android:textSize="17dp" />
+
+    </LinearLayout>
+
+</FrameLayout>

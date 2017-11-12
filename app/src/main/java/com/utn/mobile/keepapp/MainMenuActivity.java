@@ -203,6 +203,8 @@ public class MainMenuActivity extends AppCompatActivity implements
             nextFragment = new RecordsAndExercisesFragment();
         }else if(id == R.id.nav_mapa) {
             nextFragment = new MapaFragment();
+        }else if(id == R.id.nav_tools){
+            nextFragment = new ConfiguracionFragment();
         }else if(id == R.id.nav_sign_out) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)

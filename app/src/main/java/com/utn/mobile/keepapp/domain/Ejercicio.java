@@ -1,5 +1,8 @@
 package com.utn.mobile.keepapp.domain;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Joel on 10/9/2017.
  */
@@ -10,6 +13,8 @@ public class Ejercicio implements Comparable<Ejercicio> {
     private Double valor;
     private String unidad;
     private String imagen;
+
+    public static int orden = 0;
 
     public String getImagen() { return imagen; }
 
@@ -78,9 +83,29 @@ public class Ejercicio implements Comparable<Ejercicio> {
 
     @Override
     public int compareTo(Ejercicio ej) {
-        // Aca se pueden poner varios criterios para ordenar la coleccion
-        // Por ahora solo pongo por orden alfabetico
-        int comp = this.nombre.compareTo(ej.getNombre());
+        int comp = 0;
+        switch (orden){
+            case 0: // Orden alfabetico
+                comp = this.nombre.compareTo(ej.getNombre());
+                break;
+            case 1: // Orden por fecha
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                Date fecha_1 = new Date();
+                Date fecha_2 = new Date();
+                try {
+                    fecha_1 = dateFormat.parse(this.fecha);
+                    fecha_2 = dateFormat.parse(ej.fecha);
+                }catch (Exception e){
+                    comp = 0;
+                }
+                if(fecha_1.before(fecha_2)){
+                    comp = 1;
+                }else if(fecha_1.after(fecha_2)){
+                    comp = -1;
+                }
+                break;
+        }
+
         return comp;
     }
 }
