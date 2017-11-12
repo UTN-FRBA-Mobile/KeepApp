@@ -32,6 +32,7 @@ public class ConfiguracionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_configuracion, container,false);
 
+        getActivity().setTitle("Configuración");
 
         return v;
     }
@@ -39,6 +40,7 @@ public class ConfiguracionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         spinner_ordenar = (Spinner) getView().findViewById(R.id.spinner_orden);
         spinner_ordenar.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

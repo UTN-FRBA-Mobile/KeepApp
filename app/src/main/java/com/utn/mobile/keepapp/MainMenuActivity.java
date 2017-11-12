@@ -234,7 +234,7 @@ public class MainMenuActivity extends AppCompatActivity implements
                     .addToBackStack(String.valueOf(nextFragment.getId()))
                     .commit();
         }
-        getSupportActionBar().setTitle(item.getTitle());
+        //getSupportActionBar().setTitle(item.getTitle());
         drawer.closeDrawer(GravityCompat.START);
 
         return true;

@@ -59,6 +59,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 false);
         activity = getActivity();
 
+        getActivity().setTitle("Mi Gimnasio");
+
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
