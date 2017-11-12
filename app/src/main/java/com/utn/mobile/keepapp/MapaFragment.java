@@ -12,10 +12,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -55,8 +57,10 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.fragment_mapa, container,
-                false);
+                    false);
+
         activity = getActivity();
 
         getActivity().setTitle("Mi Gimnasio");
@@ -98,14 +102,19 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         final ImageButton deleteButton = (ImageButton) getView().findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Gimnasio currentGym = (Gimnasio) currentMarker.getTag();
-                mDatabase.child(currentGym.getFirebaseId()).removeValue(new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        hideForm();
-                        Toast.makeText(getContext(), "El gimnasio ha sido eliminado satisfactoriamente", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                try {
+                    Gimnasio currentGym = (Gimnasio) currentMarker.getTag();
+                    mDatabase.child(currentGym.getFirebaseId()).removeValue(new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            hideForm();
+                            Toast.makeText(getContext(), "El gimnasio ha sido eliminado satisfactoriamente", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }catch (Exception e){
+                    currentMarker.remove();
+                    hideForm();
+                }
             }
         });
 
@@ -115,6 +124,17 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 hideForm();
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // NECESARIO PARA EVITAR CRASH ONBACKPRESSED
+        final FragmentManager fragManager = this.getChildFragmentManager();
+        final Fragment fragment = fragManager.findFragmentById(R.id.map);
+        if(fragment!=null){
+            fragManager.beginTransaction().remove(fragment).commit();
+        }
     }
 
     private void hideForm() {
@@ -187,6 +207,10 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapLongClick(LatLng point) {
         inputName.setText("");
+
+        ImageButton saveButton = (ImageButton) getView().findViewById(R.id.saveButton);
+        saveButton.setVisibility(View.VISIBLE);
+
         currentMarker = mapa.addMarker(new MarkerOptions()
             .position(point)
             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
@@ -242,8 +266,16 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     public boolean onMarkerClick(final Marker marker) {
         currentMarker = marker;
 
-        Gimnasio currentGym = (Gimnasio) marker.getTag();
-        inputName.setText(currentGym.getNombre());
+        ImageButton saveButton = (ImageButton) getView().findViewById(R.id.saveButton);
+        try {
+            Gimnasio currentGym = (Gimnasio) marker.getTag();
+            inputName.setText(currentGym.getNombre());
+            saveButton.setVisibility(View.GONE);
+        }catch (Exception e){
+            inputName.setText("");
+            saveButton.setVisibility(View.VISIBLE);
+        }
+
         showForm();
 
         return true;

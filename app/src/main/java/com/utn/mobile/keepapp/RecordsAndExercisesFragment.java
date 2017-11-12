@@ -51,7 +51,7 @@ public class RecordsAndExercisesFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_records_and_exercises, container, false);
         insertTabs(container);
 
-        getActivity().setTitle("Ejercicios");
+        getActivity().setTitle("Mis Ejercicios");
 
         viewPager = (ViewPager) rootView.findViewById(R.id.pagerRecords);
         setupViewPager(viewPager);
