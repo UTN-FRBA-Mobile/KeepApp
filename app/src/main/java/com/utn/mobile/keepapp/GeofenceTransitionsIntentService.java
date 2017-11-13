@@ -26,9 +26,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
     private Handler handler;
     Context mContext;
 
-    public static boolean vibrar = true;
-    public static boolean sonar = true;
-
     public GeofenceTransitionsIntentService() {
         super(TAG);  // use TAG to name the IntentService worker thread
     }
@@ -77,11 +74,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 .setContentIntent(resultPendingIntent);
 
 
-        if(sonar) {
+        if(ConfiguracionFragment.sonar) {
             mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         }
 
-        if(vibrar) {
+        if(ConfiguracionFragment.vibrar) {
             mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
         }
 

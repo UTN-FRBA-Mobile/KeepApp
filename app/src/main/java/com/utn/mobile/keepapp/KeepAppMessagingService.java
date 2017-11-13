@@ -4,6 +4,7 @@ package com.utn.mobile.keepapp;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -27,6 +28,14 @@ public class KeepAppMessagingService extends FirebaseMessagingService {
             builder.setSmallIcon(R.mipmap.keepapp_launcher_round);
             builder.setContentTitle("Mensaje de "+payload.get("userFrom"));
             builder.setContentText(payload.get("message"));
+
+            if(ConfiguracionFragment.sonar) {
+                builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            }
+
+            if(ConfiguracionFragment.vibrar) {
+                builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+            }
 
             Intent intent = new Intent(this, MainMenuActivity.class);
             intent.putExtra("notification_userfrom", payload.get("userFrom"));

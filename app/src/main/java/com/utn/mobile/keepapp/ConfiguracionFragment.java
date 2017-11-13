@@ -27,6 +27,9 @@ public class ConfiguracionFragment extends Fragment {
     Switch switch_vibrar;
     Switch switch_sonar;
 
+    public static boolean vibrar = true;
+    public static boolean sonar = true;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,20 +58,20 @@ public class ConfiguracionFragment extends Fragment {
         });
 
         switch_vibrar = (Switch)getView().findViewById(R.id.switch_vibrar);
-        switch_vibrar.setChecked(GeofenceTransitionsIntentService.vibrar);
+        switch_vibrar.setChecked(vibrar);
         switch_vibrar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GeofenceTransitionsIntentService.vibrar = isChecked;
+                vibrar = isChecked;
             }
         });
 
         switch_sonar = (Switch)getView().findViewById(R.id.switch_sonar);
-        switch_sonar.setChecked(GeofenceTransitionsIntentService.sonar);
+        switch_sonar.setChecked(sonar);
         switch_sonar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GeofenceTransitionsIntentService.sonar = isChecked;
+                sonar = isChecked;
             }
         });
 
