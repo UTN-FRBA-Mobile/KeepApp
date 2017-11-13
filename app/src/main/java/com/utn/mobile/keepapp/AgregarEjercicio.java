@@ -205,6 +205,12 @@ public class AgregarEjercicio extends AppCompatActivity {
     }
 
     private void onExerciseSaved(){
+        AccessToken fbToken = AccessToken.getCurrentAccessToken();
+        if(fbToken == null){
+            finish();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Sigue superándote día a día")
                 .setTitle("Felicitaciones");
@@ -216,6 +222,7 @@ public class AgregarEjercicio extends AppCompatActivity {
                 if(fbToken == null){
                     Toast.makeText(AgregarEjercicio.this, "No tiene vinculada una cuenta de Facebook", Toast.LENGTH_LONG).show();
                     finish();
+                    return;
                 }
                 if(fbToken.isExpired()){
                     Toast.makeText(AgregarEjercicio.this, "Ocurrió un error, intente en unos instantes", Toast.LENGTH_LONG).show();
@@ -248,6 +255,10 @@ public class AgregarEjercicio extends AppCompatActivity {
                 request.executeAsync();
             }
         });
+        builder.setNegativeButton("Solo guardar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            } });
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
