@@ -10,7 +10,11 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Ejercicio;
+import com.utn.mobile.keepapp.domain.FriendsAdapter;
 import com.utn.mobile.keepapp.domain.Notificacion;
 
 import org.json.JSONArray;
@@ -200,17 +205,15 @@ public class AgregarEjercicio extends AppCompatActivity {
 
         onExerciseSaved();
 
-        //this.finish();
 
     }
 
     private void onExerciseSaved(){
-        AccessToken fbToken = AccessToken.getCurrentAccessToken();
+        final AccessToken fbToken = AccessToken.getCurrentAccessToken();
         if(fbToken == null){
             finish();
             return;
         }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Sigue superándote día a día")
                 .setTitle("Felicitaciones");
@@ -218,7 +221,6 @@ public class AgregarEjercicio extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 progressDialog.show();
                 //FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                AccessToken fbToken = AccessToken.getCurrentAccessToken();
                 if(fbToken == null){
                     Toast.makeText(AgregarEjercicio.this, "No tiene vinculada una cuenta de Facebook", Toast.LENGTH_LONG).show();
                     finish();
@@ -238,12 +240,7 @@ public class AgregarEjercicio extends AppCompatActivity {
                             try {
                                 JSONArray users = response.getJSONObject().getJSONArray("data");
                                 Log.d("FACEBOOK_FRIENDS", users.toString());
-                                for(int i = 0; i<users.length(); i++){
-                                    crearNotification(((JSONObject)users.get(i)).getString("id"));
-                                }
-                                Toast.makeText(AgregarEjercicio.this, "Notificaciones enviadas a "+
-                                        users.length()+" amigo"+(users.length()>1?"s":""), Toast.LENGTH_LONG).show();
-                                finish();
+                                showShareDialog(users);
                             }catch(JSONException e){
                                 Toast.makeText(AgregarEjercicio.this, "Error en formato de JSON", Toast.LENGTH_LONG).show();
                             }
@@ -265,14 +262,43 @@ public class AgregarEjercicio extends AppCompatActivity {
                 finish();
             }
         });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showShareDialog(JSONArray users){
+        AlertDialog.Builder builder = new AlertDialog.Builder(AgregarEjercicio.this, R.style.AppTheme_Dark_Dialog);
+        LayoutInflater inflater = LayoutInflater.from(AgregarEjercicio.this);
+        View view = inflater.inflate(R.layout.dialog_sharewithfriends, null);
+        final RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.friendsRecyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL));
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        final FriendsAdapter mAdapter = new FriendsAdapter(users, AgregarEjercicio.this);
+        mRecyclerView.setAdapter(mAdapter);
+        builder.setView(view);
+        builder.setTitle("Elige un amigo");
+        builder.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onClick(DialogInterface dialog, int which) {
+                //compartir a los amigos seleccionados
+                List<String> selectedIds = mAdapter.getSelectedIds();
+                for(int i = 0; i<selectedIds.size(); i++){
+                    crearNotification(selectedIds.get(i));
+                }
+                Toast.makeText(getApplicationContext(), "Notificaciones enviadas a "+
+                        selectedIds.size()+" amigo"+(selectedIds.size()>1?"s":""), Toast.LENGTH_LONG).show();
                 finish();
             }
         });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.create().show();
     }
 
 
@@ -291,7 +317,6 @@ public class AgregarEjercicio extends AppCompatActivity {
                     Notificacion notification = new Notificacion(userToId, userFrom, message);
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Notifications");
                     mDatabase.push().setValue(notification);
-                    Toast.makeText(getApplicationContext(), "Notificación enviada", Toast.LENGTH_LONG).show();
                 }
             }
 
