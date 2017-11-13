@@ -3,10 +3,12 @@ package com.utn.mobile.keepapp;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Handler;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -53,7 +55,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 @Override
                 public void run() {
                     //Toast.makeText(getApplicationContext(), "Afuera", Toast.LENGTH_SHORT).show();
-                    notificar("¡Recorda cargar tus ejercicios!");
+                    notificar("¡Recordá cargar tus ejercicios!");
                 }
             });
         }
@@ -61,12 +63,19 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     public void notificar(String mensaje){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        taskStackBuilder.addNextIntent(intent);
+        PendingIntent resultPendingIntent = taskStackBuilder.getPendingIntent(0,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.keepapp_launcher)
                 .setContentTitle("Saliste del gimnasio")
-                .setContentText(mensaje);
+                .setContentText(mensaje)
+                .setContentIntent(resultPendingIntent);
+
 
         if(sonar) {
             mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
