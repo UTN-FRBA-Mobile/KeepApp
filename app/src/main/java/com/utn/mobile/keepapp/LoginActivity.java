@@ -32,12 +32,18 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.utn.mobile.keepapp.domain.Usuario;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -133,7 +139,7 @@ public class LoginActivity extends AppCompatActivity
         Log.d("LogIn", "handleFacebookAccessToken:" + token);
 
         showProgressDialog();
-
+        final String fbUserId = token.getUserId();
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -146,6 +152,7 @@ public class LoginActivity extends AppCompatActivity
                             Toast.makeText(LoginActivity.this, "Authentication Success!",
                                     Toast.LENGTH_SHORT).show();
                             createUserWithFacebook(user);
+                            linkFacebookAndFirebaseUsers(user,fbUserId);
                             Intent i_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
                             startActivity(i_menu);
                             finish();
@@ -187,7 +194,7 @@ public class LoginActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // User exists. Do nothing
+                    //nada
                 } else{
                     Usuario u = new Usuario(user.getDisplayName(),user.getEmail(),"facebook");
                     u.setFullName(user.getDisplayName());
@@ -201,12 +208,46 @@ public class LoginActivity extends AppCompatActivity
         });
     }
 
+    private void linkFacebookAndFirebaseUsers(final FirebaseUser user, final String fbUserId) {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference();
+        DatabaseReference dr = mDatabaseReference.child("facebook_users").child(fbUserId);
+
+        dr.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //nada
+                } else{
+                    Map facebookUser = new HashMap<>();
+                    facebookUser.put("firebaseId", user.getUid());
+                    mDatabaseReference.child("facebook_users").child(fbUserId).setValue(facebookUser);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
+        //FirebaseMessaging.getInstance().subscribeToTopic("/topics/rTY8YtKsWRXy490s1LApwEYilvR2");
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
+            /*List<? extends UserInfo> userInfo = currentUser.getProviderData();
+            for(int i = 0; i<userInfo.size(); i++){
+                UserInfo info = userInfo.get(i);
+                if(info.getProviderId().contains("facebook")){
+                    String fbId = info.getUid();
+                }
+            }*/
+            String uid = currentUser.getUid();
+
             //Si tiene la sesion iniciada, ya mandarlo a la siguiente activity
             Intent i_main_menu = new Intent(getApplicationContext(), MainMenuActivity.class);
             startActivity(i_main_menu);

@@ -34,9 +34,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Ejercicio;
+import com.utn.mobile.keepapp.domain.Notificacion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -204,13 +206,17 @@ public class AgregarEjercicio extends AppCompatActivity {
 
     private void onExerciseSaved(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Cargaste tu ejercicio con éxito")
+        builder.setMessage("Sigue superándote día a día")
                 .setTitle("Felicitaciones");
-        builder.setPositiveButton("compartir", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Compartir con mis amigos", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 progressDialog.show();
                 //FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 AccessToken fbToken = AccessToken.getCurrentAccessToken();
+                if(fbToken == null){
+                    Toast.makeText(AgregarEjercicio.this, "No tiene vinculada una cuenta de Facebook", Toast.LENGTH_LONG).show();
+                    finish();
+                }
                 if(fbToken.isExpired()){
                     Toast.makeText(AgregarEjercicio.this, "Ocurrió un error, intente en unos instantes", Toast.LENGTH_LONG).show();
                     AccessToken.refreshCurrentAccessTokenAsync();
@@ -224,7 +230,13 @@ public class AgregarEjercicio extends AppCompatActivity {
                             Log.d("RESPONSE", response.toString());
                             try {
                                 JSONArray users = response.getJSONObject().getJSONArray("data");
-                                Toast.makeText(AgregarEjercicio.this, "Se encontraron "+users.length()+" amigos", Toast.LENGTH_LONG).show();
+                                Log.d("FACEBOOK_FRIENDS", users.toString());
+                                for(int i = 0; i<users.length(); i++){
+                                    crearNotification(((JSONObject)users.get(i)).getString("id"));
+                                }
+                                Toast.makeText(AgregarEjercicio.this, "Notificaciones enviadas a "+
+                                        users.length()+" amigo"+(users.length()>1?"s":""), Toast.LENGTH_LONG).show();
+                                finish();
                             }catch(JSONException e){
                                 Toast.makeText(AgregarEjercicio.this, "Error en formato de JSON", Toast.LENGTH_LONG).show();
                             }
@@ -250,6 +262,31 @@ public class AgregarEjercicio extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    private void crearNotification(String facebookId){
+        //obtengo el id de firebase del amigo de facebook
+        FirebaseDatabase.getInstance().getReference("facebook_users").child(facebookId+"/").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userToId = dataSnapshot.child("firebaseId").getValue().toString();
+                    String userFrom = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                    String message = "Cargué un nuevo ejercicio de " + spinner_ejercicios.getSelectedItem().toString()+
+                            ". No te quedes atrás.";
+
+                    //inserto la notification
+                    Notificacion notification = new Notificacion(userToId, userFrom, message);
+                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Notifications");
+                    mDatabase.push().setValue(notification);
+                    Toast.makeText(getApplicationContext(), "Notificación enviada", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
     }
 
     @Override

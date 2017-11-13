@@ -32,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 import com.utn.mobile.keepapp.domain.Usuario;
 
@@ -106,6 +107,23 @@ public class MainMenuActivity extends AppCompatActivity implements
 
         updateUserUIData();
 
+        //reviso si vengo de una notificación
+        Bundle b = this.getIntent().getExtras();
+        if(b.get("notification_message") != null && b.get("notification_userfrom") != null){
+            String notificationMessage = b.get("notification_message").toString();
+            String notificationUserFrom = b.get("notification_userfrom").toString();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(notificationMessage).setTitle("Mensaje de "+notificationUserFrom);
+            builder.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //nada
+                }
+            });
+            builder.create().show();
+        }
+
 
 // ...
 
@@ -124,6 +142,16 @@ public class MainMenuActivity extends AppCompatActivity implements
         }*/
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null ) {
+            Intent i_login = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i_login);
+            finish();
+        }
     }
 
     private void updateUserUIData() {
@@ -214,6 +242,9 @@ public class MainMenuActivity extends AppCompatActivity implements
                     {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            }
                             FirebaseAuth.getInstance().signOut();
                             LoginManager.getInstance().logOut();
                             Intent logInIntent = new Intent(getApplicationContext(), LoginActivity.class);
